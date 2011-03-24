@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "socnetapi"
   
-  s.add_development_dependency 'rspec-rails'
+  s.add_development_dependency "rspec", ["1.3.0"]
   s.add_development_dependency 'livejournal'
   s.add_development_dependency 'twitter'
   s.add_development_dependency 'koala'

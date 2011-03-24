@@ -29,7 +29,7 @@ module Socnetapi
     
     def create properties = {}
       res = @twitter.update(properties[:body])
-      res.try(:id)
+      res.id rescue nil
     end
     
     def update id, properties = {}
