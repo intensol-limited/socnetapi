@@ -21,7 +21,7 @@ module Socnetapi
     
     # Get the LiveJournal::Entry with a given id.
     def entry(id)
-      LiveJournal::Request::GetEvents.new(@user, :itemid => id, :strict => false).run || raise(NoSuchEntry, "There is no entry with that id.")
+      LiveJournal::Request::GetEvents.new(@user, :itemid => id, :strict => false).run || raise("There is no entry with that id.")
     end
     
     # Get the LiveJournal URL (e.g. http://foo.livejournal.com/123.html) for the entry with a given id.
@@ -34,6 +34,7 @@ module Socnetapi
     def create(properties = {})
       entry = LiveJournal::Entry.new
       properties[:time] ||= Time.now
+      properties[:event] ||= properties[:body]
       unless properties[:event]
         raise BodyRequired, "You must pass a :body."
       end
@@ -56,7 +57,7 @@ module Socnetapi
         return if b == false
       end
       LiveJournal::Request::EditEvent.new(@user, entry).run
-      entry
+      entry.itemid
     end
     
     def delete(id)
