@@ -2,7 +2,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "socneta
 
 describe Socnetapi::TwitterApi do
   before do
-    @twitter = Socnetapi::TwitterApi.new(:oauth_token => "254122908-fC4Beod5q3mhzmjXScBGtb1cZoPcYaN8JwWY7uT9", :oauth_token_secret => "LsMGzPHsQkAV49o2oc46HxRkuaU8nYYY3lLiURS988")
+    @twitter = Socnetapi::TwitterApi.new(:token => "254122908-fC4Beod5q3mhzmjXScBGtb1cZoPcYaN8JwWY7uT9", :token_secret => "LsMGzPHsQkAV49o2oc46HxRkuaU8nYYY3lLiURS988")
   end
   
   it "should get friends list" do
