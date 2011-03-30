@@ -9,13 +9,7 @@ module Socnetapi
       params[:token_secret] ||= '2p1gjHR1t90csXWq4FLbUz8E'
       params[:login] ||= 'intensoldev'
       raise Socnetapi::Error::NotConnected unless params[:token]
-      # 
-      # @login = params[:login]
-      # 
-      # @contacts = GData::Client::Contacts.new
-      # @contacts.oauth! params[:api_key], params[:api_secret]
-      # @contacts.authorize_from_access params[:token], params[:token_secret]
-      # 
+
       @youtube = GData::Client::YouTube.new
       @youtube.developer_key = 'AI39si4vwXwDLR5MrtsdR1ULUD8__EnEccla-0bnqV40KpeFDIyCwEv0VJqZKHUsO3MvVM_bXHp3cAr55HmMYMhqfxzLMUgDXA'
       @youtube.oauth! params[:api_key], params[:api_secret]

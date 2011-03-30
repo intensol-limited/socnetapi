@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'koala'
   s.add_dependency 'flickraw'
   s.add_dependency 'oauth'
+  s.add_dependency 'oauth2'
   s.add_dependency 'mime-types'
 
   s.files         = `git ls-files`.split("\n")

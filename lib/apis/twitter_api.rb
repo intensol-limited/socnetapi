@@ -9,8 +9,8 @@ module Socnetapi
       Twitter.configure do |config|
         config.consumer_key = data[:consumer_key]
         config.consumer_secret = data[:consumer_secret]
-        config.oauth_token = data[:oauth_token]
-        config.oauth_token_secret = data[:oauth_token_secret]
+        config.oauth_token = data[:token]
+        config.oauth_token_secret = data[:token_secret]
       end
       @twitter = Twitter::Client.new
     end
