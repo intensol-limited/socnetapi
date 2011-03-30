@@ -3,10 +3,10 @@ require "koala"
 module Socnetapi
   class FacebookApi
     def initialize data = {}
-      data[:token_secret] ||= "125273294164789|08fc1959b4b4822a1f0754bd-100002277932808|s_xsLh35VaKt5EmysYBYS3FLSMc"
+      data[:token] ||= "125273294164789|08fc1959b4b4822a1f0754bd-100002277932808|s_xsLh35VaKt5EmysYBYS3FLSMc"
       data[:api_key] ||= 'af2a48ca59c1ca00f6f7b3d0b7490082'
       data[:api_secret] ||= '8d7250d31035e81ed487ada9d63d5793'
-      @facebook = Koala::Facebook::GraphAPI.new(data[:token_secret])
+      @facebook = Koala::Facebook::GraphAPI.new(data[:token])
     end
     
     def friends
