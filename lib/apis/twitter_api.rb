@@ -6,13 +6,15 @@ module Socnetapi
     def initialize(data = {})
       data[:consumer_key] ||= "8chM6RUnuScgDD97UoIJEQ"
       data[:consumer_secret] ||= "98gHoU2ErI4sZv9Clla0ZOZhXQfUblr2NfeyDGNIQI"
-      Twitter.configure do |config|
-        config.consumer_key = data[:consumer_key]
-        config.consumer_secret = data[:consumer_secret]
-        config.oauth_token = data[:token]
-        config.oauth_token_secret = data[:token_secret]
-      end
-      @twitter = Twitter::Client.new
+      # ::Twitter.configure do |config|
+      #   config.consumer_key = data[:consumer_key]
+      #   config.consumer_secret = data[:consumer_secret]
+      #   config.oauth_token = data[:token]
+      #   config.oauth_token_secret = data[:token_secret]
+      # end
+      oauth = Twitter::OAuth.new(data[:consumer_key], data[:consumer_secret])
+      oauth.authorize_from_access(data[:token], data[:token_secret])
+      @twitter = Twitter::Base.new(oauth)
     end
     
     # @option options [Integer] :since_id Returns results with an ID greater than (that is, more recent than) the specified ID.
@@ -48,7 +50,7 @@ module Socnetapi
     private
     
     def prepare_friends friends
-      friends[:users].map do |friend|
+      friends.map do |friend|
         {
           id: friend[:id],
           name: friend[:name],
