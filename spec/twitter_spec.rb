@@ -10,7 +10,7 @@ describe Socnetapi::TwitterApi do
   end
   
   it "should get entries list" do
-    @twitter.entries.should_not be_nil
+    @twitter.get_entries.should_not be_nil
   end
   
   it "should create, update, delete entries and get entry by id" do
@@ -18,8 +18,8 @@ describe Socnetapi::TwitterApi do
     entry_id.should_not be_nil
     entry_id = @twitter.update(entry_id, :body => "Hello World! #{Time.now}")
     entry_id.should_not be_nil
-    @twitter.entry(entry_id).should_not be_nil
+    @twitter.get_entry(entry_id).should_not be_nil
     @twitter.delete(entry_id)
-    @twitter.entry(entry_id).should be_nil
+    @twitter.get_entry(entry_id).should be_nil
   end
 end

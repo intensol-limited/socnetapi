@@ -21,11 +21,11 @@ module Socnetapi
     # @option options [Integer] :max_id Returns results with an ID less than (that is, older than) or equal to the specified ID.
     # @option options [Integer] :count Specifies the number of records to retrieve. Must be less than or equal to 200.
     # @option options [Integer] :page Specifies the page of results to retrieve.
-    def entries options = {}
+    def get_entries options = {}
       prepare_entries @twitter.home_timeline(options)
     end
     
-    def entry id
+    def get_entry id
       prepare_entry(@twitter.status(id)) rescue nil
     end
     
