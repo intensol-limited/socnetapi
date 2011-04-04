@@ -10,7 +10,7 @@ describe Socnetapi::FlickrApi do
   end
   
   it "should get entries list" do
-    @flickr.entries.should_not be_nil
+    @flickr.get_entries.should_not be_nil
   end
   
   it "should create, update, delete entries and get entry by id" do
@@ -22,23 +22,23 @@ describe Socnetapi::FlickrApi do
     }.should_not raise_error
     
     lambda {
-     info = @flickr.entry entry_id
+     info = @flickr.get_entry entry_id
     }.should_not raise_error
-
-    info.title.should == "Hello Flickr!"
-    info.description.should == "Hello Flickr!" 
+  
+    info[:title].should == "Hello Flickr!"
+    info[:text].should == "Hello Flickr!" 
     
     lambda {
       entry_id = @flickr.create :file_path => path, :title => "Hello World!", :description => "Hello World!"
     }.should_not raise_error
     
     lambda {
-     info = @flickr.entry entry_id
+     info = @flickr.get_entry entry_id
     }.should_not raise_error
-
-    info.title.should == "Hello World!"
-    info.description.should == "Hello World!"
-
+  
+    info[:title].should == "Hello World!"
+    info[:text].should == "Hello World!"
+  
     lambda { @flickr.delete entry_id }.should_not raise_error
   end
 end

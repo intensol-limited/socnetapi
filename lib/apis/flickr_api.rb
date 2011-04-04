@@ -9,24 +9,45 @@ module Socnetapi
       options[:login] ||= "intensol"
       options[:auth_token] ||= "72157626325393628-b70130fda0ad504d"
 
-      # @flickr = Flickr::User.new('api_key' => options[:api_key], 'shared_secret' => options[:api_secret])
-      # @flickr = Flickr.new('api_key' => options[:api_key], 'shared_secret' => options[:api_secret], 'auth_token' => options[:auth_token])
       FlickRaw.api_key = options[:api_key]
       FlickRaw.shared_secret = options[:api_secret]
       @flickr = flickr
       @auth = flickr.auth.checkToken :auth_token => options[:auth_token]
     end
     
+    def client
+      @flickr
+    end
+    
+    def auth
+      @auth
+    end
+    
     def friends
-      @flickr.contacts.getList
+      prepare_friends @flickr.contacts.getList
     end
     
-    def entries
-      @flickr.photos.getRecent
+    def get_entries
+      prepare_entries @flickr.photos.getRecent
     end
     
-    def entry id
-      @flickr.photos.getInfo :photo_id => id.to_s
+    def get_entry id, secret = ''
+      entry = @flickr.photos.getInfo(:photo_id => id.to_s, :secret => secret)
+      {
+        id: entry.id,
+        author: {
+          id: entry.owner["nsid"],
+          name: entry.owner.realname,
+          nickname: entry.owner.username
+        },
+        title: entry.title,
+        text: entry.description,
+        attachments: {
+          images: [FlickRaw.url(entry)]
+        },
+        created_at: entry.dates.taken,
+        url: FlickRaw.url_photopage(entry)
+      }
     end
     
     def create params = {}
@@ -42,5 +63,39 @@ module Socnetapi
     def delete id
       @flickr.photos.delete :photo_id => id.to_s
     end
+    
+    private
+    
+    def prepare_friends friends
+      friends.map do |friend|
+        {
+          id: friend["nsid"],
+          nickname:  friend["username"],
+          name: friend["realname"]
+        }
+      end
+    end
+    
+    def prepare_entries entries
+      entries.map do |entry|
+        prepare_entry entry
+      end
+    end
+    
+    # {"id"=>"5588491245", "owner"=>"49650339@N07", "secret"=>"f084db399c", "server"=>"5188", "farm"=>6, "title"=>"Mex 2011 013", "ispublic"=>1, "isfriend"=>0, "isfamily"=>0} 
+    def prepare_entry entry
+      {
+        id: entry.id,
+        author: {
+          id: entry.owner
+        },
+        title: entry.title,
+        attachments: {
+          images: [FlickRaw.url(entry)]
+        },
+        url: FlickRaw.url_photopage(entry)
+      }
+    end
+      
   end
 end
