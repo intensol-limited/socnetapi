@@ -34,7 +34,7 @@ Entry
     }
     
 Friend
-______
+------
 
     {
       id: string,
