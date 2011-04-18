@@ -14,6 +14,17 @@ Usage
     twitter.delete(entry_id)
     twitter.friends # returns array of friends (see Friend)
 
+Config
+------
+
+spec/config.yml
+
+    twitter:
+      api_key: XXX
+      api_secret: XXX
+      token: XXX
+      secret: XXX
+
 Entry
 -----
 
