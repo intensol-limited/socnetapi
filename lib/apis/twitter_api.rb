@@ -3,17 +3,11 @@ require "twitter"
 
 module Socnetapi
   class TwitterApi
-    def initialize(data = {})
-      data[:consumer_key] ||= "8chM6RUnuScgDD97UoIJEQ"
-      data[:consumer_secret] ||= "98gHoU2ErI4sZv9Clla0ZOZhXQfUblr2NfeyDGNIQI"
-      # ::Twitter.configure do |config|
-      #   config.consumer_key = data[:consumer_key]
-      #   config.consumer_secret = data[:consumer_secret]
-      #   config.oauth_token = data[:token]
-      #   config.oauth_token_secret = data[:token_secret]
-      # end
-      oauth = Twitter::OAuth.new(data[:consumer_key], data[:consumer_secret])
-      oauth.authorize_from_access(data[:token], data[:token_secret])
+    def initialize(params = {})
+      raise Socnetapi::Error::NotConnected unless params[:token]
+      
+      oauth = ::Twitter::OAuth.new(params[:api_key], params[:api_secret])
+      oauth.authorize_from_access(params[:token], params[:secret])
       @twitter = Twitter::Base.new(oauth)
     end
     

@@ -3,17 +3,12 @@ require "gdata"
 module Socnetapi
   class YoutubeApi
     def initialize params = {}
-      params[:api_key] ||= 'www.tuppy.com'
-      params[:api_secret] ||= 'nbAWcAiDe0pZThE4ZWoqJEw8'
-      params[:token] ||= '1/hFDsKMztAc-0xw45T7meix9LWpOxk6KLHpP6wJ2soqw'
-      params[:token_secret] ||= '2p1gjHR1t90csXWq4FLbUz8E'
-      params[:login] ||= 'intensoldev'
       raise Socnetapi::Error::NotConnected unless params[:token]
 
       @youtube = GData::Client::YouTube.new
-      @youtube.developer_key = 'AI39si4vwXwDLR5MrtsdR1ULUD8__EnEccla-0bnqV40KpeFDIyCwEv0VJqZKHUsO3MvVM_bXHp3cAr55HmMYMhqfxzLMUgDXA'
+      @youtube.developer_key = params[:developer_key]
       @youtube.oauth! params[:api_key], params[:api_secret]
-      @youtube.authorize_from_access params[:token], params[:token_secret]
+      @youtube.authorize_from_access params[:token], params[:secret]
     end
     
     def client

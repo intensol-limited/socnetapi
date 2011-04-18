@@ -1,4 +1,5 @@
 require "rubygems"
+require "apis/error"
 require 'apis/livejournal_api'
 require 'apis/twitter_api'
 require 'apis/facebook_api'

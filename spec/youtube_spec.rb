@@ -3,7 +3,12 @@ require "mime/types"
 
 describe Socnetapi::YoutubeApi do
   before do
-    @youtube = Socnetapi::YoutubeApi.new
+    @config = YAML::load(File.open(File.join(File.dirname(__FILE__), "config.yml")))["youtube"]
+    @youtube = Socnetapi::YoutubeApi.new(:developer_key => @config["developer_key"], 
+                                         :api_key => @config["api_key"],
+                                         :api_secret => @config["api_secret"],
+                                         :token => @config["token"],
+                                         :secret => @config["secret"])
   end
   
   it "should get friends list" do

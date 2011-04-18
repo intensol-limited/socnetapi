@@ -2,7 +2,8 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "socneta
 
 describe Socnetapi::TwitterApi do
   before do
-    @twitter = Socnetapi::TwitterApi.new(:token => "254122908-fC4Beod5q3mhzmjXScBGtb1cZoPcYaN8JwWY7uT9", :token_secret => "LsMGzPHsQkAV49o2oc46HxRkuaU8nYYY3lLiURS988")
+    @config = YAML::load(File.open(File.join(File.dirname(__FILE__), "config.yml")))["twitter"]
+    @twitter = Socnetapi::TwitterApi.new(:token => @config["token"], :secret => @config["secret"])
   end
   
   it "should get friends list" do

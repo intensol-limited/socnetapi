@@ -3,20 +3,29 @@ require 'livejournal/friends'
 require 'livejournal/login' 
 require 'livejournal/sync'
 
+
 module Socnetapi
   class LivejournalApi
-    def initialize(data = {})
-      @username = data[:login]
-      @password = data[:password]
+    def initialize(params = {})
+      raise Socnetapi::Error::NotConnected unless params[:password]
+      
+      @username = params[:login]
+      @password = params[:password]
       @user = LiveJournal::User.new(@username, @password)
       @session = LiveJournal::Request::SessionGenerate.new(@user)
       @session.run
     end
     
     # Get all entries. Pass a +limit+ to only get that many (the most recent).
-    def entries(limit=nil)
+    def get_entries(limit = nil)
       limit ||= -1
-      LiveJournal::Request::GetEvents.new(@user, :recent => limit, :strict => false).run
+      # prepare_entries(LiveJournal::Request::GetEvents.new(@user, :recent => limit, :strict => false).run)
+      prepare_entries(LiveJournal::Sync::Entries.new(@user, Time.new("2011.01.01").utc).run_sync)
+    end
+    
+    # Get the LiveJournal::Entry with a given id.
+    def get_entry(id)
+      prepare_entry(LiveJournal::Request::GetEvents.new(@user, :itemid => id, :strict => false).run || raise("There is no entry with that id."))
     end
     
     # Get the LiveJournal::Entry with a given id.
@@ -65,8 +74,42 @@ module Socnetapi
     end
     
     def friends
-      LiveJournal::Request::Friends.new(@user, :include_friendofs => false).run
+      prepare_friends(LiveJournal::Request::Friends.new(@user, :include_friendofs => false).run)
     end
+    
+    private
+    
+      def prepare_entry post
+        puts post.inspect
+        # {
+        #   id: post.itemid,
+        #   author: {
+        #     id: post.postername,
+        #     group: post.journalname,
+        #     nickname: post.postername
+        #   },
+        #   title: post.subject_raw,
+        #   text: post.event_as_html,
+        #   url: url(post.itemid),
+        #   created_at: post.time
+        # }
+      end
+      
+      def prepare_entries entries
+        puts entries.inspect
+        entries.map do |key, entry|
+          prepare_entry entry
+        end
+      end
+      
+      def prepare_friends friends
+        friends.map do |friend|
+          {
+            name: friend.fullname,
+            nickname: friend.username
+          }
+        end
+      end
     
     protected
 

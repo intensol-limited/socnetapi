@@ -2,17 +2,12 @@ require "flickraw"
 
 module Socnetapi
   class FlickrApi
-    def initialize options = {}
-      options[:api_key] ||= "85cc61cb0ceb5e69aee5679acfc82e73"
-      options[:api_secret] ||= "6ebb6c07b04939b8"
-      options[:uid] ||= "60866248@N05"
-      options[:login] ||= "intensol"
-      options[:auth_token] ||= "72157626325393628-b70130fda0ad504d"
-
-      FlickRaw.api_key = options[:api_key]
-      FlickRaw.shared_secret = options[:api_secret]
+    def initialize params = {}
+      raise Socnetapi::Error::NotConnected unless params[:token]
+      FlickRaw.api_key = params[:api_key]
+      FlickRaw.shared_secret = params[:api_secret]
       @flickr = flickr
-      @auth = flickr.auth.checkToken :auth_token => options[:auth_token]
+      @auth = flickr.auth.checkToken :auth_token => params[:token]
     end
     
     def client

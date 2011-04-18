@@ -2,7 +2,8 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "socneta
 
 describe Socnetapi::LivejournalApi do
   before do
-    @livejournal = Socnetapi::LivejournalApi.new(:login => "intensoldev", :password => "qq112233")
+    @config = YAML::load(File.open(File.join(File.dirname(__FILE__), "config.yml")))["livejournal"]
+    @livejournal = Socnetapi::LivejournalApi.new(:login => @config["login"], :password => @config["password"])
   end
   
   it "should get friends list" do
@@ -10,11 +11,11 @@ describe Socnetapi::LivejournalApi do
   end
   
   it "should get entries list" do
-    @livejournal.entries(3).should_not be_nil
+    @livejournal.get_entries(3).should_not be_nil
   end
   
   it "should raise error on getting unexisting entry" do
-    lambda { @livejournal.entry(-13) }.should raise_error
+    lambda { @livejournal.get_entry(-13) }.should raise_error
   end
   
   it "should create, update, delete entries and get entry by id" do
@@ -22,9 +23,9 @@ describe Socnetapi::LivejournalApi do
     entry_id.should_not be_nil
     entry_id = @livejournal.update(entry_id, :body => "Hello World! #{Time.now}")
     entry_id.should_not be_nil
-    lambda { @livejournal.entry(entry_id) }.should_not raise_error
-    @livejournal.entry(entry_id).should_not be_nil
+    lambda { @livejournal.get_entry(entry_id) }.should_not raise_error
+    @livejournal.get_entry(entry_id).should_not be_nil
     @livejournal.delete(entry_id)
-    lambda { @livejournal.entry(entry_id) }.should raise_error
+    lambda { @livejournal.get_entry(entry_id) }.should raise_error
   end
 end
