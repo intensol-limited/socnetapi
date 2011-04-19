@@ -6,9 +6,14 @@ module Socnetapi
     def initialize(params = {})
       raise Socnetapi::Error::NotConnected unless params[:token]
       
-      oauth = ::Twitter::OAuth.new(params[:api_key], params[:api_secret])
-      oauth.authorize_from_access(params[:token], params[:secret])
-      @twitter = Twitter::Base.new(oauth)
+      Twitter.configure do |config|
+        config.consumer_key = params[:api_key]
+        config.consumer_secret = params[:api_secret]
+        config.oauth_token = params[:token]
+        config.oauth_token_secret = params[:secret]
+      end
+      
+      @twitter = Twitter
     end
     
     # @option options [Integer] :since_id Returns results with an ID greater than (that is, more recent than) the specified ID.
@@ -44,7 +49,7 @@ module Socnetapi
     private
     
     def prepare_friends friends
-      friends.map do |friend|
+      friends.users.map do |friend|
         {
           id: friend[:id],
           name: friend[:name],
