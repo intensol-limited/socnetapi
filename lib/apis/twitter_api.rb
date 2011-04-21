@@ -60,6 +60,7 @@ module Socnetapi
     end
     
     def prepare_entry entry
+      p entry
       {
         id: entry[:id],
         author: {
