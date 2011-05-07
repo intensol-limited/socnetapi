@@ -11,7 +11,8 @@ describe Socnetapi::FlickrApi do
   end
   
   it "should get entries list" do
-    @flickr.get_entries.should_not be_nil
+    entries = @flickr.get_entries
+    entries.should_not be_nil
   end
   
   it "should create, update, delete entries and get entry by id" do

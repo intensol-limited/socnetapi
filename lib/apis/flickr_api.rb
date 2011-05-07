@@ -23,7 +23,7 @@ module Socnetapi
     end
     
     def get_entries
-      prepare_entries @flickr.photos.getRecent
+      prepare_entries @flickr.photos.getContactsPhotos
     end
     
     def get_entry id, secret = ''
@@ -82,7 +82,8 @@ module Socnetapi
       {
         id: entry.id,
         author: {
-          id: entry.owner
+          id: entry.owner,
+          username: entry.username
         },
         title: entry.title,
         attachments: {
