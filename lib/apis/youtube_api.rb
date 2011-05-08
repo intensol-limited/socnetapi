@@ -108,14 +108,13 @@ module Socnetapi
     # Entry is a Nokogiri node
     def parse_entry entry
       group_node = entry.at('//media:group')
-      if id_tag = entry.at('//yt:videoid')
-        id = id_tag.text
+      if id_tag = entry.css('yt|videoid')
+        video_id = id_tag.text
       else 
-        id = parse_entry_id(entry.at_css('id').text)
+        video_id = parse_entry_id(entry.at_css('id').text)
       end
-      
       {
-        id: id,
+        id: video_id,
         created_at: entry.at_css('published').text,
         title: entry.at_css('title').text,
         description: group_node.at('//media:description').text,
@@ -130,14 +129,14 @@ module Socnetapi
     end
     
     def prepare_friends friends
-      friends.map do |friend|
-        p friend
-        {
-          id: "id",
-          nickname:  "nickname",
-          name: "realname"
-        }
-      end
+      # friends.map do |friend|
+      #   {
+      #     id: "id",
+      #     nickname:  "nickname",
+      #     name: "realname"
+      #   }
+      # end
+      friend
     end
     
     def parse_entry_id string
