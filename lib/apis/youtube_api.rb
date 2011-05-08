@@ -120,7 +120,10 @@ module Socnetapi
         title: entry.at_css('title').text,
         description: group_node.at('//media:description').text,
         tags: group_node.at('//media:keywords').text,
-        author: entry.at_css('author name').text,
+        author: {
+          id: entry.at_css('author name').text,
+          name: entry.at_css('author name').text,
+        },
         thumb: group_node.search('//media:thumbnail').last['url'],
         url: group_node.search('//media:content').first['url']
       }
