@@ -107,7 +107,7 @@ module Socnetapi
     
     # Entry is a Nokogiri node
     def parse_entry entry
-      group_node = entry.at('//media:group')
+      group_node = entry.css('media|group')
       if id_tag = entry.css('yt|videoid')
         video_id = id_tag.text
       else 
@@ -117,14 +117,14 @@ module Socnetapi
         id: video_id,
         created_at: entry.at_css('published').text,
         title: entry.at_css('title').text,
-        description: group_node.at('//media:description').text,
-        tags: group_node.at('//media:keywords').text,
+        description: entry.at_css('media|description').text,
+        tags: entry.at_css('media|keywords').text,
         author: {
           id: entry.at_css('author name').text,
           name: entry.at_css('author name').text,
         },
-        thumb: group_node.search('//media:thumbnail').last['url'],
-        url: group_node.search('//media:content').first['url']
+        thumb: entry.css('media|thumbnail').last['url'],
+        url: entry.css('media|content').first['url']
       }
     end
     
