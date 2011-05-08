@@ -83,7 +83,7 @@ module Socnetapi
         id: entry.id,
         author: {
           id: entry.owner,
-          username: entry.username
+          name: entry.username
         },
         title: entry.title,
         attachments: {

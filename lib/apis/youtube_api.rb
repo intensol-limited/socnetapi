@@ -16,7 +16,7 @@ module Socnetapi
     end
     
     def friends
-      @youtube.get('https://www.google.com/m8/feeds/contacts/default/full?max-results=10000').body
+      prepare_friends @youtube.get('https://www.google.com/m8/feeds/contacts/default/full?max-results=10000').body
     end
     
     def user_entries
@@ -127,6 +127,17 @@ module Socnetapi
         thumb: group_node.search('//media:thumbnail').last['url'],
         url: group_node.search('//media:content').first['url']
       }
+    end
+    
+    def prepare_friends friends
+      friends.map do |friend|
+        p friend
+        {
+          id: "id",
+          nickname:  "nickname",
+          name: "realname"
+        }
+      end
     end
     
     def parse_entry_id string
