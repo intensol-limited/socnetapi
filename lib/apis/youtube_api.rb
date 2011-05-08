@@ -81,7 +81,7 @@ module Socnetapi
       @doc.at('//yt:videoid').text rescue nil
     end
 
-    def entries
+    def get_entries
       url = "http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos"
       parse_entries(@youtube.get(url).body)
     end

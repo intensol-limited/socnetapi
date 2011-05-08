@@ -16,7 +16,7 @@ describe Socnetapi::YoutubeApi do
   end
   
   it "should get entries list" do
-    @youtube.entries.should_not be_nil
+    @youtube.get_entries.should_not be_nil
   end
   
   it "should upload and delete video" do
