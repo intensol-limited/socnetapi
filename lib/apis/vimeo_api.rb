@@ -102,7 +102,6 @@ module Socnetapi
     end
     
     def prepare_entries entries
-      pp entries
       entries.map do |entry|
         if entry["type"] == "upload"
           {
