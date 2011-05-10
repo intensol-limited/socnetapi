@@ -45,14 +45,14 @@ module Socnetapi
       }
     end
     
-    def create params = {}
+    def create file_path, params = {}
       # See http://www.flickr.com/services/api/upload.api.html for more information on the arguments.
-      @flickr.upload_photo params[:file_path], {:title => params[:title], :description => params[:description]}
+      @flickr.upload_photo file_path, {:title => params[:title], :description => params[:description]}
     end
     
-    def update params = {}
+    def update file_path, params = {}
       # See http://www.flickr.com/services/api/replace.api.html for more information on the arguments.
-      @flickr.replace_photo params[:file_path], :photo_id => params[:photo_id]
+      @flickr.replace_photo file_path, :photo_id => params[:photo_id]
     end
     
     def delete id

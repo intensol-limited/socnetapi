@@ -20,7 +20,7 @@ describe Socnetapi::FlickrApi do
     entry_id = info = nil
     
     lambda {
-      entry_id = @flickr.create :file_path => path, :title => "Hello Flickr!", :description => "Hello Flickr!"
+      entry_id = @flickr.create path, :title => "Hello Flickr!", :description => "Hello Flickr!"
     }.should_not raise_error
     
     lambda {
@@ -31,7 +31,7 @@ describe Socnetapi::FlickrApi do
     info[:text].should == "Hello Flickr!" 
     
     lambda {
-      entry_id = @flickr.create :file_path => path, :title => "Hello World!", :description => "Hello World!"
+      entry_id = @flickr.create path, :title => "Hello World!", :description => "Hello World!"
     }.should_not raise_error
     
     lambda {
