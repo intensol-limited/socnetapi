@@ -63,10 +63,12 @@ module Socnetapi
     
     def prepare_friends friends
       friends.map do |friend|
+        info = @flickr.people.getInfo :user_id => friend["nsid"]
         {
           id: friend["nsid"],
           nickname:  friend["username"],
-          name: friend["realname"]
+          name: friend["realname"],
+          userpic: "http://farm#{info['iconfarm']}.static.flickr.com/#{info['iconserver']}/buddyicons/#{info['nsid']}.jpg"
         }
       end
     end
