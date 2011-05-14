@@ -16,7 +16,8 @@ module Socnetapi
     end
     
     def friends
-      prepare_friends @youtube.get('https://www.google.com/m8/feeds/contacts/default/full?max-results=10000').body
+      # prepare_friends @youtube.get('http://gdata.youtube.com/feeds/api/users/default/contacts?v=2').body
+      prepare_friends @youtube.get("http://gdata.youtube.com/feeds/api/users/default/subscriptions?v=2").body
     end
     
     def user_entries
@@ -129,14 +130,19 @@ module Socnetapi
     end
     
     def prepare_friends friends
-      # friends.map do |friend|
-      #   {
-      #     id: "id",
-      #     nickname:  "nickname",
-      #     name: "realname"
-      #   }
-      # end
-      friend
+      resp = []
+      @doc = Nokogiri::XML(friends)
+      @doc.css('yt|username').each do |username_node|
+        username = username_node.text
+        userdata = JSON.parse(@youtube.get("http://gdata.youtube.com/feeds/api/users/#{username}?fields=yt:username,media:thumbnail&alt=json").body)
+        resp << {
+          id: username_node.text,
+          nickname:  username_node.text,
+          name: username_node.text,
+          userpic: userdata ["entry"]["media$thumbnail"]["url"]
+        }
+      end
+      resp
     end
     
     def parse_entry_id string

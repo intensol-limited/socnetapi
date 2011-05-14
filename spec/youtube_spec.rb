@@ -11,15 +11,14 @@ describe Socnetapi::YoutubeApi do
                                          :secret => @config["secret"])
   end
   
-  # it "should get friends list" do
-  #   @youtube.friends.should_not be_nil
-  # end
-  
-  it "should get entries list" do
-    entries = @youtube.get_entries
-    pp entries
-    entries.should_not be_nil
+  it "should get friends list" do
+    @youtube.friends.should_not be_nil
   end
+  
+  # it "should get entries list" do
+  #   entries = @youtube.get_entries
+  #   entries.should_not be_nil
+  # end
   # 
   # it "should upload and delete video" do
   #   entry_id = nil
