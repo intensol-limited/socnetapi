@@ -82,7 +82,8 @@ module Socnetapi
       friends.map do |friend|
         {
           id: friend["id"],
-          name: friend["name"]
+          name: friend["name"],
+          userpic: @facebook.get_picture(friend["id"])
         }
       end
     end
