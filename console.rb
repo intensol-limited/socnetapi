@@ -8,5 +8,6 @@ config = YAML::load_file('spec/config.yml')
 
 @picasa = Socnetapi::PicasaApi.new config['picasa']
 @youtube = Socnetapi::YoutubeApi.new config['youtube']
+@fr = Socnetapi::FriendsterApi.new config['friendster']
 
 IRB.start

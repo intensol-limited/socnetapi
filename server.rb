@@ -60,12 +60,14 @@ end
 get '/friendster_callback' do
   url = 'http://api.friendster.com/v1/session'
   auth_token = params['auth_token']
+
   session_params = {
     'auth_token' => params['auth_token'],
     'api_key' => config['friendster'][:api_key]
   }
+
   normalized_params = session_params.keys.sort.map{|k| "#{k}=#{session_params[k]}" }.join
-  sig = Digest::MD5.hexdigest(normalized_params + config['friendster'][:secret])
+  sig = Digest::MD5.hexdigest('/v1/session' + normalized_params + config['friendster'][:secret])
   session_params['sig'] = sig
   response = Net::HTTP.start('api.friendster.com', 80){|http|
     http.post('/v1/session?' + session_params.map{|k,v| "#{k}=#{v}" }.join("&"), '')
@@ -74,7 +76,5 @@ get '/friendster_callback' do
   user_id = (doc.root > 'uid').text
   session_key = (doc.root > 'session_key').text
   
-  
-  "<dl><dt>Session Key:<dt><dd>#{session_key}</dd><dt>User ID:</dt><dd>#{user_id}</dd></dl>"
-  
+  "<dl><dt>Auth Token:<dt><dd>#{auth_token}</dd><dt>Session Key:<dt><dd>#{session_key}</dd><dt>User ID:</dt><dd>#{user_id}</dd></dl>"
 end
