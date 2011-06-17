@@ -14,10 +14,10 @@ describe Socnetapi::VimeoApi do
   #   @vimeo.friends.should_not be_nil
   # end
   # 
-  # it "should get entries list" do
-  #   entries = @vimeo.get_entries
-  #   entries.should_not be_nil
-  # end
+  it "should get entries list" do
+    entries = @vimeo.get_entries
+    entries.should_not be_nil
+  end
   
   # it "should get entry info" do
   #   @vimeo.get_entry("16087562").should_not be_nil

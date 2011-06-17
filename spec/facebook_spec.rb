@@ -14,13 +14,13 @@ describe Socnetapi::FacebookApi do
     @facebook.get_entries.should_not be_nil
   end
   
-  it "should create, update, delete entries and get entry by id" do
-    entry_id = @facebook.create(:body => "Hello Facebook! #{Time.now}")
-    entry_id.should_not be_nil
-    entry_id = @facebook.update(entry_id, :body => "Hello World! #{Time.now}")
-    entry_id.should_not be_nil
-    @facebook.get_entry(entry_id).should_not be_nil
-    @facebook.delete(entry_id)
-    @facebook.get_entry(entry_id).should be_nil
-  end
+  # it "should create, update, delete entries and get entry by id" do
+  #   entry_id = @facebook.create(:body => "Hello Facebook! #{Time.now}")
+  #   entry_id.should_not be_nil
+  #   entry_id = @facebook.update(entry_id, :body => "Hello World! #{Time.now}")
+  #   entry_id.should_not be_nil
+  #   @facebook.get_entry(entry_id).should_not be_nil
+  #   @facebook.delete(entry_id)
+  #   @facebook.get_entry(entry_id).should be_nil
+  # end
 end

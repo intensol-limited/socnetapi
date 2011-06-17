@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec", [">= 2.5"]
   s.add_dependency 'livejournal'
   s.add_dependency 'twitter'
-  s.add_dependency 'koala'
+  s.add_dependency 'koala', "~> 1.1rc"
   s.add_dependency 'flickraw'
   s.add_dependency 'oauth'
   s.add_dependency 'oauth2'

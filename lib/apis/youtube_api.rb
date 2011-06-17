@@ -118,8 +118,8 @@ module Socnetapi
         id: video_id,
         created_at: entry.at_css('published').text,
         title: entry.at_css('title').text,
-        description: entry.at_css('media|description').try(:text),
-        tags: entry.at_css('media|keywords').try(:text),
+        description: entry.at_css('media|description').text,
+        tags: entry.at_css('media|keywords').text,
         author: {
           id: entry.at_css('author name').text,
           name: entry.at_css('author name').text,
@@ -139,7 +139,7 @@ module Socnetapi
           id: username_node.text,
           nickname:  username_node.text,
           name: username_node.text,
-          userpic: userdata ["entry"]["media$thumbnail"]["url"]
+          userpic: userdata["entry"]["media$thumbnail"]["url"]
         }
       end
       resp
