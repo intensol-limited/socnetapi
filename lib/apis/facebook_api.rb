@@ -66,8 +66,18 @@ module Socnetapi
         title: entry["name"],
         text: entry["message"],
         attachments: {
-          images: entry["picture"] ? [entry["picture"]] : []
+					thumbnails: entry["picture"] ? [entry["picture"]] : [],
+          images: entry["type"] == "photo" ? [@facebook.get_picture(entry["object_id"])] : [],
+					videos: entry["type"] == "video" ? [entry["source"]] : [],
+					link: {
+						name: entry["name"],
+						description: entry["description"],
+						caption: entry["caption"] 
+					}
+
         },
+				type: entry["type"],
+				link: entry["link"],
         created_at: entry["created_at"]
       }
     end
