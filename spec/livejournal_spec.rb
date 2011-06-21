@@ -20,12 +20,12 @@ describe Socnetapi::LivejournalApi do
   
   it "should create, update, delete entries and get entry by id" do
     entry_id = @livejournal.create(:body => "Hello LJ! #{Time.now}")
-    entry_id.should_not be_nil
-    entry_id = @livejournal.update(entry_id, :body => "Hello World! #{Time.now}")
-    entry_id.should_not be_nil
-    lambda { @livejournal.get_entry(entry_id) }.should_not raise_error
-    @livejournal.get_entry(entry_id).should_not be_nil
-    @livejournal.delete(entry_id)
-    lambda { @livejournal.get_entry(entry_id) }.should raise_error
-  end
+  	entry_id.should_not be_nil
+  	entry_id = @livejournal.update(entry_id, :body => "Hello World! #{Time.now}")
+  	entry_id.should_not be_nil
+  	lambda { @livejournal.get_entry(entry_id) }.should_not raise_error
+  	@livejournal.get_entry(entry_id).should_not be_nil
+  	@livejournal.delete(entry_id)
+  	lambda { @livejournal.get_entry(entry_id) }.should raise_error
+ 	end
 end

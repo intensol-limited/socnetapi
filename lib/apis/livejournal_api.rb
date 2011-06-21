@@ -19,8 +19,7 @@ module Socnetapi
     # Get all entries. Pass a +limit+ to only get that many (the most recent).
     def get_entries(limit = nil)
       limit ||= -1
-      # prepare_entries(LiveJournal::Request::GetEvents.new(@user, :recent => limit, :strict => false).run)
-      prepare_entries(LiveJournal::Sync::Entries.new(@user, Time.new("2011.01.01").utc).run_sync)
+      prepare_entries(LiveJournal::Request::GetFriendsPage.new(@user, :recent => limit, :strict => false).run)
     end
     
     # Get the LiveJournal::Entry with a given id.
@@ -80,25 +79,23 @@ module Socnetapi
     private
     
       def prepare_entry post
-        puts post.inspect
-        # {
-        #   id: post.itemid,
-        #   author: {
-        #     id: post.postername,
-        #     group: post.journalname,
-        #     nickname: post.postername
-        #   },
-        #   title: post.subject_raw,
-        #   text: post.event_as_html,
-        #   url: url(post.itemid),
-        #   created_at: post.time
-        # }
+         {
+           id: post.itemid,
+           author: {
+             id: post.postername,
+             group: post.journalname,
+             nickname: post.postername
+           },
+           title: post.subject,
+           text: post.event_as_html,
+           url: "http://#{post.journalname.gsub(/_/, '-')}.livejournal.com/#{post.itemid}.html",
+           created_at: post.time
+         }
       end
       
       def prepare_entries entries
-        puts entries.inspect
-        entries.map do |key, entry|
-          prepare_entry entry
+        entries.map do |k, e|
+          prepare_entry(e)
         end
       end
       
