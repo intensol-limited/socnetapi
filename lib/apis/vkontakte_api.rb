@@ -118,12 +118,9 @@ module Socnetapi
 			return unless profile.is_a?(Hash)
 			{
     		id: profile["uid"],
-        first_name: profile["first_name"],
-        last_name: profile["last_name"],
+        name: "#{profile["first_name"]} #{profile["last_name"]}",
         nickname: profile["nickname"],
-        photo: profile["photo"],
-        photo_medium: profile["photo_medium"],
-        photo_big: profile["photo_big"]
+        userpic: profile["photo"]
       }
 		end
   end
