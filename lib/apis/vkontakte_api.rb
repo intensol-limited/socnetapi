@@ -5,40 +5,48 @@ module Socnetapi
     def initialize params = {}
       raise Socnetapi::Error::NotConnected unless params[:app_id] && params[:api_key]
       @vkontakte = ::VkApi::Session.new params[:app_id], params[:api_key]
+			@uid = params[:uid]
+			@access_token = params[:access_token]
     end
     
-    def friends uid,access_token
+    def friends 
     	prepare_friends(@vkontakte.friends.get(:uid => uid,:fields => "uid,first_name,last_name,nickname,photo",:access_token => access_token)) rescue []
     end
     
-    def get_entries uid,access_token,count = 100 
-			wall = @vkontakte.wall.get(:owner_id => uid,:access_token => access_token, :count => count)
+    def get_entries count = 100 
+			wall = @vkontakte.wall.get(:owner_id => @uid,:access_token => @access_token, :count => count)
 			wall.shift
       prepare_entries wall rescue []
     end
     
-    def get_entry uid,id,access_token
-    	prepare_entry(@vkontakte.wall.getById(:posts => "#{uid}_#{id}",:access_token => access_token)[0])
+    def get_entry id
+    	prepare_entry(@vkontakte.wall.getById(:posts => "#{@uid}_#{id}",:access_token => @access_token)[0])
     end
     
-    def create access_token,params = {}
-      res = @vkontakte.wall.post(:message => params[:message], :access_token => access_token)
+    def create params = {}
+      res = @vkontakte.wall.post(:message => params[:message], :access_token => @access_token)
       res["post_id"] if res
     end
     
-    def delete id, access_token
-      @vkontakte.wall.delete(:post_id => id, :access_token => access_token)
+    def delete id
+      @vkontakte.wall.delete(:post_id => id, :access_token => @access_token)
     end
     
-    def update id,access_token, params = {}
-      delete(id,access_token)
-      res = @vkontakte.wall.post(:message => params[:message], :access_token => access_token)
+    def update id, params = {}
+      delete(id)
+      res = @vkontakte.wall.post(:message => params[:message], :access_token => @access_token)
       res["post_id"] if res
     end
    	
 		def get_profile id
-			profile = @vkontakte.getProfiles(:uids => id, :fields => 'fist_name,last_name,nickname,photo,photo_mediu,photo_big')
+			profile = @vkontakte.getProfiles(:uids => id, :fields => 'fist_name,last_name,nickname,photo,photo_medium,photo_big')
 			prepare_profile(profile[0]["user"])
+		end
+		
+		def get_video owner_id,id
+			video = @vkontakte.video.get(:videos => "#{owner_id}_#{id}",:access_token => @access_token)
+			video.shift
+			prepare_video(video[0])
 		end
     private
     
@@ -71,6 +79,7 @@ module Socnetapi
 						title: entry["attachment"]["audio"]["title"], 
 						performer: entry["attachment"]["audio"]["performer"] 
 					} : nil,
+					video: entry["attachment"]["video"] ? get_video(entry["attachment"]["video"]["owner_id"],entry["attachment"]["video"]["vid"]) : nil,
 					doc: entry["attachment"]["doc"] ? { 
 						id: entry["attachment"]["doc"]["did"],
 						title: entry["attachment"]["doc"]["title"], 
@@ -122,6 +131,16 @@ module Socnetapi
         nickname: profile["nickname"],
         userpic: profile["photo"]
       }
+		end
+
+		def prepare_video video
+			return unless video.is_a?(Hash)
+			{
+				id: video["vid"],
+				title: video["title"],
+				description: video["description"],
+				url: video["player"]
+			}
 		end
   end
 end
