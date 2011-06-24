@@ -52,7 +52,7 @@ module Socnetapi
       raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
 
       @doc = Nokogiri::XML(response.body)
-      @doc.at('//yt:videoid').text rescue nil
+      @doc.at('//yt:videoid').try(:[], :text) rescue nil
     end
 
 
@@ -79,7 +79,7 @@ module Socnetapi
       raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
 
       @doc = Nokogiri::XML(response.body)
-      @doc.at('//yt:videoid').text rescue nil
+      @doc.at('//yt:videoid').try(:[], :text) rescue nil
     end
 
     def get_entries
@@ -110,19 +110,19 @@ module Socnetapi
     def parse_entry entry
       group_node = entry.css('media|group')
       if id_tag = entry.css('yt|videoid')
-        video_id = id_tag.text
+        video_id = id_tag.try(:[], :text)
       else 
-        video_id = parse_entry_id(entry.at_css('id').text)
+        video_id = parse_entry_id(entry.at_css('id').try(:[], :text))
       end
       {
         id: video_id,
-        created_at: entry.at_css('published').text,
-        title: entry.at_css('title').text,
-        description: entry.at_css('media|description').text,
-        tags: entry.at_css('media|keywords').text,
+        created_at: entry.at_css('published').try(:[], :text),
+        title: entry.at_css('title').try(:[], :text),
+        description: entry.at_css('media|description').try(:[], :text),
+        tags: entry.at_css('media|keywords').try(:[], :text),
         author: {
-          id: entry.at_css('author name').text,
-          name: entry.at_css('author name').text,
+          id: entry.at_css('author name').try(:[], :text),
+          name: entry.at_css('author name').try(:[], :text),
         },
         thumb: entry.css('media|thumbnail') ? entry.css('media|thumbnail').last['url'] : '',
         url: entry.css('media|content') ? entry.css('media|content').first['url'] : ''
@@ -133,12 +133,12 @@ module Socnetapi
       resp = []
       @doc = Nokogiri::XML(friends)
       @doc.css('yt|username').each do |username_node|
-        username = username_node.text
+        username = username_node.try(:[], :text)
         userdata = JSON.parse(@youtube.get("http://gdata.youtube.com/feeds/api/users/#{username}?fields=yt:username,media:thumbnail&alt=json").body)
         resp << {
-          id: username_node.text,
-          nickname:  username_node.text,
-          name: username_node.text,
+          id: username_node.try(:[], :text),
+          nickname:  username_node.try(:[], :text),
+          name: username_node.try(:[], :text),
           userpic: userdata["entry"]["media$thumbnail"]["url"]
         }
       end
