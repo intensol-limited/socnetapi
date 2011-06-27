@@ -15,9 +15,7 @@ module Socnetapi
     
     def get_entries count = 100 
 			news = @vkontakte.newsfeed.get(:access_token => @access_token, :count => count)
-      w = prepare_entries(news["items"]).compact! rescue []
-			puts w
-			w
+      prepare_entries(news["items"]).compact! rescue []
     end
     
     def get_entry id
