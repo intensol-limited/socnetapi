@@ -14,9 +14,10 @@ module Socnetapi
     end
     
     def get_entries count = 100 
-			wall = @vkontakte.wall.get(:owner_id => @uid,:access_token => @access_token, :count => count)
-			wall.shift
-      prepare_entries wall rescue []
+			news = @vkontakte.newsfeed.get(:access_token => @access_token, :count => count)
+      w = prepare_entries(news["items"]).compact! rescue []
+			puts w
+			w
     end
     
     def get_entry id
@@ -53,8 +54,8 @@ module Socnetapi
     def prepare_entry entry
       return unless (entry && entry.is_a?(Hash))
       {
-        id: entry["id"],
-        author: get_profile(entry["from_id"]), 
+        id: entry["post_id"],
+        author: get_profile(entry["source_id"]), 
         title: entry["title"],
         text: entry["text"],
         attachments: entry["attachment"] ? {
@@ -107,8 +108,9 @@ module Socnetapi
 					} : nil,
 
         } : nil,
-        created_at: entry["date"]
-      }
+				images: entry["photos"] ? prepare_photos(entry["photos"]) : nil,
+				created_at: entry["date"]
+      } unless entry["type"] == "friend"
     end
     
     def prepare_entries entries
@@ -141,6 +143,13 @@ module Socnetapi
 				description: video["description"],
 				url: video["player"]
 			}
+		end
+
+		def prepare_photos photos
+			urls = []
+			photos.shift
+			photos.each{ |photo| photo.is_a?(Hash) ? urls << photo["src_big"] : nil}
+			urls
 		end
   end
 end
