@@ -53,7 +53,7 @@ module Socnetapi
       return unless (entry && entry.is_a?(Hash))
       {
         id: entry["post_id"],
-        author: get_profile(entry["source_id"]), 
+        author: entry["source_id"] ? get_profile(entry["source_id"]) : get_profile(entry["from_id"]), 
         title: entry["title"],
         text: entry["text"],
         attachments: entry["attachment"] ? {
