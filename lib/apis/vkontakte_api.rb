@@ -107,7 +107,7 @@ module Socnetapi
 
         } : nil,
 				images: entry["photos"] ? prepare_photos(entry["photos"]) : nil,
-				created_at: entry["date"]
+				created_at: Time.at(entry["date"])
       } unless entry["type"] == "friend"
     end
     
@@ -118,8 +118,8 @@ module Socnetapi
     end
     
     def prepare_friends friends
-      friends.map do |friend|
-				 prepare_profile friend
+      friends.map do |friend| 
+				prepare_profile friend
 			end
     end
 
