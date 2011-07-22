@@ -124,8 +124,8 @@ module Socnetapi
           id: entry.at_css('author name').try(:text),
           name: entry.at_css('author name').try(:text),
         },
-        thumb: entry.css('media|thumbnail') ? entry.css('media|thumbnail').last['url'] : '',
-        url: entry.css('media|content') ? entry.css('media|content').first['url'] : ''
+        thumb: (!entry.css('media|thumbnail').empty?) ? entry.css('media|thumbnail').last['url'] : '',
+        url: (!entry.css('media|content').empty?) ? entry.css('media|content').first['url'] : ''
       }
     end
     
