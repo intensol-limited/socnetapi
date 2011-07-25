@@ -10,7 +10,7 @@ module Socnetapi
     end
     
     def friends 
-    	prepare_friends(@vkontakte.friends.get(:uid => uid,:fields => "uid,first_name,last_name,nickname,photo",:access_token => access_token)) rescue []
+    	prepare_friends(@vkontakte.friends.get(:uid => @uid,:fields => "uid,first_name,last_name,nickname,photo",:access_token => @access_token)) rescue []
     end
     
     def get_entries count = 100 
