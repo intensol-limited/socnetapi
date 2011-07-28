@@ -132,15 +132,19 @@ module Socnetapi
     def prepare_friends friends
       resp = []
       @doc = Nokogiri::XML(friends)
-      @doc.css('yt|username').each do |username_node|
-        username = username_node.try(:text)
-        userdata = JSON.parse(@youtube.get("http://gdata.youtube.com/feeds/api/users/#{username}?fields=yt:username,media:thumbnail&alt=json").body)
-        resp << {
-          id: username_node.try(:text),
-          nickname:  username_node.try(:text),
-          name: username_node.try(:text),
-          userpic: userdata["entry"]["media$thumbnail"]["url"]
-        }
+      begin
+        @doc.css('yt|username').each do |username_node|
+          username = username_node.try(:text)
+          userdata = JSON.parse(@youtube.get("http://gdata.youtube.com/feeds/api/users/#{username}?fields=yt:username,media:thumbnail&alt=json").body)
+          resp << {
+           id: username_node.try(:text),
+           nickname:  username_node.try(:text),
+           name: username_node.try(:text),
+           userpic: userdata["entry"]["media$thumbnail"]["url"]
+          }
+        end
+      rescue
+        return []
       end
       resp
     end
