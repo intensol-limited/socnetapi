@@ -1,4 +1,5 @@
 require 'vimeo'
+require 'date'
 
 module Socnetapi
   class VimeoApi
@@ -86,7 +87,7 @@ module Socnetapi
       video = entry["video"][0]
       {
         id: video["id"],
-        created_at: video["modified_date"],
+        created_at: DateTime.strptime(video["modified_date"],'%Y-%m-%d %T').to_s,
         title: video["title"],
         description: video["description"],
         tags: video["tags"]["tag"].map{|tag| tag["_content"]},
@@ -102,11 +103,12 @@ module Socnetapi
     end
     
     def prepare_entries entries
+      
       entries.map do |entry|
         if entry["type"] == "upload"
           {
             id: entry["video_id"],
-            created_at: entry["date"],
+            created_at: DateTime.strptime(entry["date"],'%Y-%m-%d %T').to_s,
             title: entry["video_title"],
             description: entry["video_description"],
             author: {
