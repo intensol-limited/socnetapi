@@ -33,7 +33,8 @@ Entry
       author: {
         id: string,
         name: string,
-        nickname: string
+        nickname: string,
+        userpic: string
       },
       title: string,
       text: text,

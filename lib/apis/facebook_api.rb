@@ -61,7 +61,8 @@ module Socnetapi
         id: entry["id"],
         author: {
           id: entry["from"]["id"],
-          name: entry["from"]["name"]
+          name: entry["from"]["name"],
+          userpic: @facebook.get_picture(entry["from"]["id"])
         },
         title: entry["name"],
         text: entry["message"],
