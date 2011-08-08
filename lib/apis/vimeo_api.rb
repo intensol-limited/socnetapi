@@ -10,7 +10,7 @@ module Socnetapi
     
     def friends
       vimeo_contacts = Vimeo::Advanced::Contact.new(@api_key, @api_secret, @token_hash)
-      prepare_friends vimeo_contacts.get_all(@user_id)
+      prepare_friends vimeo_contacts.get_all(@user_id) rescue []
     end
     
     def get_entries
