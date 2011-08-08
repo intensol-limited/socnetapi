@@ -69,7 +69,7 @@ module Socnetapi
         attachments: {
 					thumbnails: entry["picture"] ? [entry["picture"]] : [],
           images: entry["type"] == "photo" ? [@facebook.get_picture(entry["object_id"])] : [],
-					videos: entry["type"] == "video" ? [entry["source"]] : [],
+					videos: entry["type"] == "video" ? [entry["link"]] : [],
 					link: {
 						name: entry["name"],
 						description: entry["description"],
