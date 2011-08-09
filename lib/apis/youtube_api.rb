@@ -96,6 +96,7 @@ module Socnetapi
     
     def parse_entries xml
       @doc = Nokogiri::XML(xml)
+      p @doc
       @doc.css('entry').map do |entry|
         parse_entry entry
       end
@@ -125,7 +126,7 @@ module Socnetapi
           name: entry.at_css('author name').try(:text),
         },
         thumb: (!entry.css('media|thumbnail').empty?) ? entry.css('media|thumbnail').last['url'] : '',
-        url: (!entry.css('media|content').empty?) ? entry.css('media|content').first['url'] : ''
+        url: (!entry.css('media|player').empty?) ? entry.css('media|player').first['url'] : ''
       }
     end
     
