@@ -96,7 +96,6 @@ module Socnetapi
     
     def parse_entries xml
       @doc = Nokogiri::XML(xml)
-      p @doc
       @doc.css('entry').map do |entry|
         parse_entry entry
       end
