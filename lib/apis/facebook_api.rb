@@ -20,7 +20,7 @@ module Socnetapi
     end
     
     def create params = {}
-      res = @facebook.put_wall_post(params[:body])
+      res = @facebook.put_wall_post(params[:body],params[:attachments])
       res["id"]
     end
     
