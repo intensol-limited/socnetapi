@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "socnetapi"
   
   s.add_development_dependency "rspec", [">= 2.5"]
-  s.add_dependency 'twitter'
+  s.add_dependency 'twitter', '>= 1.0.0'
   s.add_dependency 'koala', "~> 1.1rc"
   s.add_dependency 'flickraw'
   s.add_dependency 'oauth'
