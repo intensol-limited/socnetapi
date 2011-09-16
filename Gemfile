@@ -7,3 +7,5 @@ gem 'vk_api', :git => 'https://github.com/karevn/vk-ruby.git'
 gem 'livejournal', :git => 'git@github.com:intensol-limited/livejournal.git'
 gem 'nokogiri'
 gem 'sinatra'
+gem 'crack'
+gem 'vimeo', :git => "git@github.com:mgolovnia/vimeo.git"
