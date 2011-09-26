@@ -67,30 +67,30 @@ module Socnetapi
     def prepare_text entry
       case entry['updateType']
         when 'CONN'
-          "<a href=#{entry['updateContent']['person']['siteStandardProfileRequest']['url']}>#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}</a> is now connected to " + entry['updateContent']['person']['connections']['values'].map do |conn|
+          "<a href=\"#{entry['updateContent']['person']['siteStandardProfileRequest']['url']}\">#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}</a> is now connected to " + entry['updateContent']['person']['connections']['values'].map do |conn|
             if conn.key?('siteStandardProfileRequest')
-              "<a href=#{conn['siteStandardProfileRequest']['url']}>#{conn['firstName']} #{conn['lastName']}</a>" 
+              "<a href=\"#{conn['siteStandardProfileRequest']['url']}\">#{conn['firstName']} #{conn['lastName']}</a>" 
             else
               "private user"
             end
           end.join(', ')
         when 'NCONN'
-          "<a href=#{entry['updateContent']['person']['siteStandardProfileRequest']['url']}>#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}</a> is now a connection."
+          "<a href=\"#{entry['updateContent']['person']['siteStandardProfileRequest']['url']}\">#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}</a> is now a connection."
         when 'CCEM'
-          "<a href=#{entry['updateContent']['person']['siteStandardProfileRequest']['url']}>#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}</a> has joined LinkedIn."
+          "<a href=\"#{entry['updateContent']['person']['siteStandardProfileRequest']['url']}\">#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}</a> has joined LinkedIn."
         when 'STAT'
           entry['updateContent']['person']['currentStatus']
         when 'SHAR'
           puts entry
         when 'JGRP'
-          "<a href=#{entry['updateContent']['person']['siteStandardProfileRequest']['url']}>#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}</a> joined the group " + entry['updateContent']['person']['memberGroups']['values'].map do |conn|
-            "<a href=#{conn['siteGroupRequest']['url']}>#{conn['name']}}</a>"
+          "<a href=\"#{entry['updateContent']['person']['siteStandardProfileRequest']['url']}\">#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}</a> joined the group " + entry['updateContent']['person']['memberGroups']['values'].map do |conn|
+            "<a href=\"#{conn['siteGroupRequest']['url']}\">#{conn['name']}</a>"
           end.join(', ')
         when 'JOBP'
-         "<a href=#{entry['updateContent']['job']['jobPoster']['siteStandardProfileRequest']['url']}>#{entry['updateContent']['job']['jobPoster']['firstName']} #{entry['updateContent']['job']['jobPoster']['lastName']}</a> posted a job: #{entry['updateContent']['position']['title']} at #{entry['updateContent']['company']['name']}."
+         "<a href=\"#{entry['updateContent']['job']['jobPoster']['siteStandardProfileRequest']['url']}\">#{entry['updateContent']['job']['jobPoster']['firstName']} #{entry['updateContent']['job']['jobPoster']['lastName']}</a> posted a job: #{entry['updateContent']['position']['title']} at #{entry['updateContent']['company']['name']}."
         when 'PREC'
-          "<a href=#{entry['updateContent']['person']['siteStandardProfileRequest']['url']}>#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}</a> recommends " + entry['updateContent']['person']['recomendations-given']['values'].map do |conn|
-            "<a href=#{conn['recommendee']['siteStandardProfileRequest']['url']}>#{conn['recommendee']['firstName']} #{conn['recommendee']['lastName']}</a>: \"#{conn['recomendationSnippet']}\""
+          "<a href=\"#{entry['updateContent']['person']['siteStandardProfileRequest']['url']}\">#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}</a> recommends " + entry['updateContent']['person']['recomendations-given']['values'].map do |conn|
+            "<a href=\"#{conn['recommendee']['siteStandardProfileRequest']['url']}\">#{conn['recommendee']['firstName']} #{conn['recommendee']['lastName']}</a>: \"#{conn['recomendationSnippet']}\""
           end.join(', ')
       end
     end
