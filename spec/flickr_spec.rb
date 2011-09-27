@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "lib", "socneta
 describe Socnetapi::FlickrApi do
   before do
     @config = YAML::load(File.open(File.join(File.dirname(__FILE__), "config.yml")))["flickr"]
-    @flickr = Socnetapi::FlickrApi.new(:api_key => @config["api_key"], :api_secret => @config["api_secret"], :token => @config["token"])
+    @flickr = Socnetapi::FlickrApi.new(:api_key => @config["api_key"], :api_secret => @config["api_secret"], :token => @config["token"], :secret => @config["secret"])
   end
   
   it "should get friends list" do

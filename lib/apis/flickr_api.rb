@@ -6,16 +6,13 @@ module Socnetapi
       raise Socnetapi::Error::NotConnected unless params[:token]
       FlickRaw.api_key = params[:api_key]
       FlickRaw.shared_secret = params[:api_secret]
+      flickr.access_token = params[:token]
+      flickr.access_secret = params[:secret]
       @flickr = flickr
-      @auth = flickr.auth.checkToken :auth_token => params[:token]
     end
     
     def client
       @flickr
-    end
-    
-    def auth
-      @auth
     end
     
     def friends

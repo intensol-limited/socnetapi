@@ -79,6 +79,7 @@ module Socnetapi
     private
     
       def prepare_entry post
+        p post
          {
            id: post.itemid,
            author: {
@@ -88,7 +89,7 @@ module Socnetapi
            },
            title: post.subject,
            text: post.event_as_html,
-           url: "http://#{post.journalname.gsub(/_/, '-')}.livejournal.com/#{post.itemid}.html",
+           url: "http://#{post.journalname ? post.journalname.gsub(/_/, '-') : 'unknown'}.livejournal.com/#{post.itemid}.html",
            created_at: post.time
          }
       end
