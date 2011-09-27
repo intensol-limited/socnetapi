@@ -2,6 +2,8 @@ require 'livejournal/entry'
 require 'livejournal/friends' 
 require 'livejournal/login' 
 require 'livejournal/sync'
+require 'nokogiri'
+require 'open-uri'
 
 
 module Socnetapi
@@ -91,7 +93,8 @@ module Socnetapi
            author: {
              id: post.postername,
              group: post.journalname,
-             nickname: post.postername
+             nickname: post.postername,
+             userpic: get_userpic(post.postername)
            },
            title: post.subject,
            text: post.event_as_html,
@@ -110,9 +113,17 @@ module Socnetapi
         friends.map do |friend|
           {
             name: friend.fullname,
-            nickname: friend.username
+            nickname: friend.username,
+            userpic: get_userpic(friend.username)
           }
         end
+      end
+    
+      def get_userpic username
+        return nil unless username
+        doc = Nokogiri::XML(open("http://#{username.gsub(/_/, '-')}.livejournal.com/data/rss"))        
+        url = doc.xpath("rss/channel/image/url").first
+        url ? url.children.first.content : nil
       end
     
     protected
