@@ -15,6 +15,13 @@ module Socnetapi
       @session = LiveJournal::Request::SessionGenerate.new(@user)
       @session.run
     end
+
+    def self.check_login(params ={})
+      user = LiveJournal::User.new( params[:login], params[:password])
+      session = LiveJournal::Request::SessionGenerate.new(user)
+      msg = session.instance_variable_get(:@result)["errmsg"]
+      msg ? msg : "OK"
+    end
     
     # Get all entries. Pass a +limit+ to only get that many (the most recent).
     def get_entries(limit = nil)
@@ -79,7 +86,6 @@ module Socnetapi
     private
     
       def prepare_entry post
-        p post
          {
            id: post.itemid,
            author: {
