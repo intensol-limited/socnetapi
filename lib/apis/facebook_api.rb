@@ -4,7 +4,9 @@ module Socnetapi
   class FacebookApi
     def initialize params = {}
       raise Socnetapi::Error::NotConnected unless params[:token]
-      @facebook = Koala::Facebook::GraphAPI.new(params[:token])
+      (Koala::HTTPService.http_options[:ssl] ||= {})[:ca_path] = '/usr/lib/ssl/certs/' 
+      (Koala::HTTPService.http_options[:ssl] ||= {})[:ca_file] = 'ca-certificates.crt'
+      @facebook = Koala::Facebook::API.new(params[:token],)
     end
     
     def friends
