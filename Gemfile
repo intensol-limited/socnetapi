@@ -11,3 +11,5 @@ gem 'crack'
 gem 'vimeo', :git => "git@github.com:mgolovnia/vimeo.git"
 gem 'linkedin', :git => 'https://github.com/pengwynn/linkedin.git'
 gem 'i18n'
+gem 'curb' # Curl for rails
+
