@@ -30,7 +30,7 @@ module Socnetapi
       @googleplus
     end
 
-    def read_activities(bind)
+    def get_entries(bind)
       check_and_update_google_token(bind)
       read(bind.token)
     end
