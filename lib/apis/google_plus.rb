@@ -1,4 +1,5 @@
 require "oauth2"
+require 'curb'
 
 module Socnetapi
   class GooglePlusApi
@@ -11,11 +12,8 @@ module Socnetapi
     end
 
     def initialize params = {}
-      raise Socnetapi::Error::NotConnected unless params[:token]
-
       @app_key = params[:app_key]
       @client = OAuth2::Client.new(params[:api_key], params[:api_secret], {:site => 'https://accounts.google.com', :authorize_url => '/o/oauth2/auth',  :token_url => '/o/oauth2/token'})
-      @googleplus = @client.web_server.get_access_token(params[:token])
     end
 
     def client
