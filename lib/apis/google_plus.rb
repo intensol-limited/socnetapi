@@ -46,7 +46,7 @@ module Socnetapi
 
     private
     def read(token)
-      read_google_activities(token).inject([]) {|ret, elem| ret << {:id => elem['actor']['id'], :activity_id => elem['id'],:name => elem['actor']['displayName'], :name_link => elem['actor']['url'], :photo => elem['actor']['image']['url'] , :created_at => elem['published'], :text => elem['title'] , :text_link => elem['url']}}
+      read_google_activities(token).inject([]) {|ret, elem| ret << {:id => elem['actor']['id'], :activity_id => elem['id'],:name => elem['actor']['displayName'], :name_link => elem['actor']['url'], :photo => elem['actor']['image']['url'] , :created_at => elem['published'], :text => elem['title'] , :text_link => elem['url'] , :attachments => elem['object']['attachments']}}
     end
 
     def read_google_activities(token)
