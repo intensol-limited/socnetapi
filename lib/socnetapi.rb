@@ -22,4 +22,4 @@ require 'apis/blogger_api'
 require 'apis/linkedin_api'
 require 'apis/wordpress_api'
 require 'apis/tumblr_api'
-
+require 'apis/google_plus'
