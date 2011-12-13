@@ -5,6 +5,7 @@ module Socnetapi
 end
 
 require "pp"
+require "link_alias"
 require "apis/error"
 require 'apis/livejournal_api'
 require 'apis/twitter_api'
@@ -21,3 +22,4 @@ require 'apis/blogger_api'
 require 'apis/linkedin_api'
 require 'apis/wordpress_api'
 require 'apis/tumblr_api'
+
