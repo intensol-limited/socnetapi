@@ -15,7 +15,7 @@ module Socnetapi
     end
     
     def get_entries
-      prepare_entries Vimeo::Simple::Activity.happened_to_contacts(@user_id)
+      prepare_entries Vimeo::Simple::Activity.contacts_did(@user_id)
     end
     
     def get_entry id
@@ -103,22 +103,27 @@ module Socnetapi
     end
     
     def prepare_entries entries
-      
       entries.map do |entry|
-        if entry["type"] == "upload"
+        if (entry.is_a?(Array))
           {
-            id: entry["video_id"],
-            created_at: DateTime.strptime(entry["date"],'%Y-%m-%d %T').to_s,
-            title: entry["video_title"],
-            description: entry["video_description"],
-            author: {
-              id: entry["subject_id"],
-              name: entry["subject_name"],
-              userpic: entry["subject_portrait_medium"]
-            },
-            thumb: entry["video_thumbnail_small"],
-            url: entry["video_url"]
+              error: entry[1].inspect
           }
+        else
+          if entry["type"] == "upload"
+            {
+              id: entry["video_id"],
+              created_at: DateTime.strptime(entry["date"],'%Y-%m-%d %T').to_s,
+              title: entry["video_title"],
+              description: entry["video_description"],
+              author: {
+                id: entry["subject_id"],
+                name: entry["subject_name"],
+                userpic: entry["subject_portrait_medium"]
+              },
+              thumb: entry["video_thumbnail_small"],
+              url: entry["video_url"]
+            }
+          end
         end
       end
     end
