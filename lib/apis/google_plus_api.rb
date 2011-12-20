@@ -35,15 +35,18 @@ module Socnetapi
 
     def check_and_update_google_token(extra_credentials)
       token = OAuth2::AccessToken.from_hash(client, extra_credentials.dup)
-      if token.expired?
-        access_token = client.auth_code.refresh_token(token.refresh_token)
-        {
-            :token => access_token.token,
-            :extra_credentials => GooglePlusApi.get_credential(access_token)
-        }
-      else
-        { :extra_credentials => extra_credentials }
-      end
+      update = token.expired?
+      [ update,
+        if update
+          access_token = client.auth_code.refresh_token(token.refresh_token)
+          {
+              :token => access_token.token,
+              :extra_credentials => GooglePlusApi.get_credential(access_token)
+          }
+        else
+          {   :extra_credentials => extra_credentials   }
+        end
+      ]
     end
 
     private
