@@ -43,13 +43,14 @@ module Socnetapi
     end
     
     def friends
-      prepare_friends @twitter.friends
+      prepare_friends @twitter.friend_ids
     end
     
     private
     
     def prepare_friends friends
-      friends.users.map do |friend|
+      friends.collection.map do |friend|
+        friend = @twitter.user(friend)
         {
           id: friend[:id],
           name: friend[:name],
