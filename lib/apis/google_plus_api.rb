@@ -36,13 +36,27 @@ module Socnetapi
     def check_and_update_google_token(extra_credentials)
       token = OAuth2::AccessToken.from_hash(client, extra_credentials.dup)
       update = token.expired?
+      token = token.refresh!(extra_credentials)
+      puts token.inspect
       [ update,
         if update
-          access_token = client.auth_code.refresh_token(token.refresh_token)
           {
-              :token => access_token.token,
-              :extra_credentials => GooglePlusApi.get_credential(access_token)
+              :token => token.token,
+              :extra_credentials => GooglePlusApi.get_credential(token)
           }
+
+
+          #if extra_credentials[:refresh_token]
+          #  c = Curl::Easy.http_post("https://accounts.google.com/o/oauth2/token", Curl::PostField.content('client_id', GOOGLE_KEY), Curl::PostField.content('client_secret', GOOGLE_SECRET), Curl::PostField.content('refresh_token', credentials['refresh_token']), Curl::PostField.content('grant_type', 'refresh_token'))
+          #  c.perform
+          #  data = JSON.parse(c.body_str)
+          #  {
+          #      :token => data['access_token'],
+          #      :extra_credentials => (extra_credentials.merge(:expires_at => (Time.now.to_i + data['expired_in'].to_i)))
+          #  }
+          #else
+          #  raise "Refresh token is empty"
+          #end
         else
           {   :extra_credentials => extra_credentials   }
         end
