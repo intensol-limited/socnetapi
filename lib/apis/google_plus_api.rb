@@ -57,7 +57,7 @@ module Socnetapi
     def read_google_activities(token)
       c = Curl::Easy.new("https://www.googleapis.com/plus/v1/people/me/activities/public?alt=json&pp=1&key=#{app_key}&access_token=#{token}")
       c.perform
-      JSON.parse(c.body_str)['items']
+      JSON.parse(c.body_str)['items'] || []
     end
   end
 end
