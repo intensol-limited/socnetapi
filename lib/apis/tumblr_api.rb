@@ -5,7 +5,8 @@ module Socnetapi
   class TumblrApi
     def initialize(params = {})
       raise Socnetapi::Error::NotConnected unless params[:token]
-      
+      @api_key = params[:api_key] 
+      @blogname = params[:blogname]
       consumer = OAuth::Consumer.new params[:api_key],  params[:api_secret],  :site => "http://api.tumblr.com" 
       @tumblr = OAuth::AccessToken.new(consumer, params[:token], params[:secret])
     end
@@ -18,22 +19,22 @@ module Socnetapi
       prepare_entries(JSON::parse(@tumblr.get("/v2/user/dashboard").body)["response"]["posts"])
     end
     
-    def get_entry id
-      prepare_entry(@tumblr.status(id)) rescue nil
+    def get_entry(id)
+      prepare_entry(JSON::parse(@tumblr.get("/v2/blog/#{@blogname}/posts?id=#{id}&api_key=#{@api_key}").body)["response"]["posts"].last) rescue nil
     end
     
     def create properties = {}
-      res = @tumblr.update(properties[:body])
-      res.id rescue nil
+      res = JSON::parse(@tumblr.post("/v2/blog/#{@blogname}/post",properties).body)["response"]["id"]
+      return nil unless res
+      res
     end
     
-    def update id, properties = {}
-      delete(id)
-      create(properties)
+    def update properties = {}
+      @tumblr.post("/v2/blog/#{@blogname}/post/edit",properties)
     end
     
-    def delete id
-      @Tumblr.status_destroy(id)
+    def delete(id)
+      @tumblr.post("/v2/blog/#{@blogname}/post/delete",{:id => id})
     end
     
     def friends
