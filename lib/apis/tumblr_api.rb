@@ -5,7 +5,7 @@ module Socnetapi
   class TumblrApi
     def initialize(params = {})
       raise Socnetapi::Error::NotConnected unless params[:token]
-      consumer = OAuth::Consumer.new params[:api_key],  params[:api_secret],  :site => "http://api.tumblr.com" 
+      consumer = OAuth::Consumer.new params[:api_key],  params[:api_secret],  :site => "http://api.tumblr.com"
       @tumblr = OAuth::AccessToken.new(consumer, params[:token], params[:secret])
     end
 
@@ -33,8 +33,8 @@ module Socnetapi
       prepare_user_blogs(JSON::parse(@tumblr.post("/v2/user/info").body)['response']['user']['blogs'])
     end
     
-    def get_entry id
-      prepare_entry(@tumblr.status(id)) rescue nil
+    def get_entry(id)
+      prepare_entry(JSON::parse(@tumblr.get("/v2/blog/#{user_blogs.first}.tumblr.com/posts?id=#{id}").body)["response"]["posts"].last) rescue nil
     end
 
     # @option properties [Hash] create_link - title, url, description
