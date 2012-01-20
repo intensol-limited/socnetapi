@@ -5,7 +5,9 @@ module Socnetapi
   class TumblrApi
     def initialize(params = {})
       raise Socnetapi::Error::NotConnected unless params[:token]
-      consumer = OAuth::Consumer.new params[:api_key],  params[:api_secret],  :site => "http://api.tumblr.com" 
+      @api_key = params[:api_key]
+      @blogname = params[:blogname]
+      consumer = OAuth::Consumer.new params[:api_key],  params[:api_secret],  :site => "http://api.tumblr.com"
       @tumblr = OAuth::AccessToken.new(consumer, params[:token], params[:secret])
     end
 
@@ -33,25 +35,22 @@ module Socnetapi
       prepare_user_blogs(JSON::parse(@tumblr.post("/v2/user/info").body)['response']['user']['blogs'])
     end
     
-    def get_entry id
-      prepare_entry(@tumblr.status(id)) rescue nil
+    def get_entry(id)
+      prepare_entry(JSON::parse(@tumblr.get("/v2/blog/#{@blogname}/posts?id=#{id}&api_key=#{@api_key}").body)["response"]["posts"].last) rescue nil
     end
 
-    # @option properties [Hash] create_link - title, url, description
-    # @option properties [Hash] create_audio - caption, external_url || data
-    # @option properties [Hash] create_video - caption, embed || data
-    # @option properties [Hash] create_photo - caption, link, source || data
-    def create blog = nil, properties = {}
-      res = @tumblr.post("/v2/blog/#{blog || user_blogs.first}.tumblr.com/post", properties)
-      JSON.parse(res.body)['response']['id'] rescue nil
+    def create properties = {}
+      res = JSON::parse(@tumblr.post("/v2/blog/#{@blogname}/post",properties).body)["response"]["id"]
+      return nil unless res
+      res
     end
-
-    def update blog, id, properties = {}
-      @tumblr.post("/v2/blog/#{blog || user_blogs.first}.tumblr.com/post/edit", (properties.merge({'id' => id})))
+    
+    def update properties = {}
+      @tumblr.post("/v2/blog/#{@blogname}/post/edit",properties)
     end
-
-    def delete blog, id
-      @tumblr.post("/v2/blog/#{blog || user_blogs.first}.tumblr.com/post/delete", {:id => id})
+    
+    def delete(id)
+      @tumblr.post("/v2/blog/#{@blogname}/post/delete",{:id => id})
     end
     
     def friends
@@ -77,6 +76,7 @@ module Socnetapi
     def prepare_entry entry
       {
         id: entry["id"],
+        url: entry["post_url"],
         author: {
           id: entry["blog_name"],
           name: entry["blog_name"],
