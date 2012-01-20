@@ -48,6 +48,7 @@ module Socnetapi
       return nil unless %w(CONN NCONN CCEM STAT JGRP JOBP PREC).include?(entry['updateType'])
       {
         id: entry['updateKey'],
+        url: entry['updateContent']['siteStandardProfileRequest']['url'],
         author: {
           id: entry['updateContent']['person']['id'],
           name: "#{entry['updateContent']['person']['firstName']} #{entry['updateContent']['person']['lastName']}",
