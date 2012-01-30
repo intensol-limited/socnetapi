@@ -13,9 +13,12 @@ module Socnetapi
       vimeo_contacts = Vimeo::Advanced::Contact.new(@api_key, @api_secret, @token_hash)
       prepare_friends vimeo_contacts.get_all(@user_id) rescue []
     end
-    
+
     def get_entries
-      prepare_entries Vimeo::Simple::Activity.contacts_did(@user_id)
+      friends.map do |friend|
+        vimeo_videos = Vimeo::Advanced::Video.new(@api_key, @api_secret, @token_hash)
+        prepare_entries({:id => friend[:id], :name => friend['name'], :userpic => friend['userpic']}, vimeo_videos.get_all(friend[:id])) rescue []
+      end
     end
     
     def get_entry id
@@ -102,29 +105,17 @@ module Socnetapi
       }
     end
     
-    def prepare_entries entries
-      entries.map do |entry|
-        if (entry.is_a?(Array))
-          {
-              error: entry[1].inspect
-          }
-        else
-          if entry["type"] == "upload"
-            {
-              id: entry["video_id"],
-              created_at: DateTime.strptime(entry["date"],'%Y-%m-%d %T').to_s,
-              title: entry["video_title"],
-              description: entry["video_description"],
-              author: {
-                id: entry["subject_id"],
-                name: entry["subject_name"],
-                userpic: entry["subject_portrait_medium"]
-              },
-              thumb: entry["video_thumbnail_small"],
-              url: entry["video_url"]
-            }
-          end
-        end
+    def prepare_entries friend, entries
+      entries['videos']['video'].map do |entry|
+        {
+          id: entry["id"],
+          created_at: DateTime.strptime(entry["upload_date"],'%Y-%m-%d %T').to_s,
+          title: entry["title"],
+          description: "",
+          author: friend,
+          thumb: "",
+          url: "http://vimeo.com/#{entry["id"]}"
+        }
       end
     end
     
