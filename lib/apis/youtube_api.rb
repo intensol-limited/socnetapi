@@ -10,21 +10,21 @@ module Socnetapi
       @youtube.oauth! params[:api_key], params[:api_secret]
       @youtube.authorize_from_access params[:token], params[:secret]
     end
-    
+
     def client
       @youtube
     end
-    
+
     def friends
-      # prepare_friends @youtube.get('http://gdata.youtube.com/feeds/api/users/default/contacts?v=2').body
+      #prepare_friends @youtube.get('http://gdata.youtube.com/feeds/api/users/default/contacts?v=2').body
       prepare_friends @youtube.get("http://gdata.youtube.com/feeds/api/users/default/subscriptions?v=2").body
     end
-    
+
     def user_entries
       url = "http://gdata.youtube.com/feeds/api/users/default/uploads"
       parse_entries(@youtube.get(url).body)
     end
-    
+
     def delete(id)
       edit_url = "http://gdata.youtube.com/feeds/api/users/default/uploads/#{id}"
       @youtube.delete(edit_url)
@@ -48,7 +48,7 @@ module Socnetapi
         </entry>}
 
       response = @youtube.put(edit_url, entry)
-      
+
       raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
 
       @doc = Nokogiri::XML(response.body)
@@ -83,35 +83,35 @@ module Socnetapi
     end
 
     def get_entries
-      url = "http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos"
-      parse_entries(@youtube.get(url).body)
+      subscriptions = @youtube.get("http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos").body
+      parse_entries subscriptions
     end
-    
+
     def entry id
       url = "http://gdata.youtube.com/feeds/api/videos/#{id}?v=2"
       parse_entry_from_xml(@youtube.get(url).body)
     end
-    
+
     private
-    
+
     def parse_entries xml
       @doc = Nokogiri::XML(xml)
       @doc.css('entry').map do |entry|
-        parse_entry entry
+          parse_entry entry
       end
     end
-    
+
     def parse_entry_from_xml xml
       @doc = Nokogiri::XML(xml)
       parse_entry @doc.at_css('entry')
     end
-    
+
     # Entry is a Nokogiri node
     def parse_entry entry
       group_node = entry.css('media|group')
       if id_tag = entry.css('yt|videoid')
         video_id = id_tag.try(:text)
-      else 
+      else
         video_id = parse_entry_id(entry.at_css('id').try(:text))
       end
       {
@@ -128,7 +128,7 @@ module Socnetapi
         url: (!entry.css('media|player').empty?) ? entry.css('media|player').first['url'] : ''
       }
     end
-    
+
     def prepare_friends friends
       resp = []
       @doc = Nokogiri::XML(friends)
@@ -148,7 +148,7 @@ module Socnetapi
       end
       resp
     end
-    
+
     def parse_entry_id string
       string.split("/").last
     end
