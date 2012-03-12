@@ -18,11 +18,11 @@ module Socnetapi
     end
     
     def friends
-      prepare_friends() rescue []
+      prepare_friends()
     end
     
     def get_entries
-      prepare_entries() rescue []
+      prepare_entries()
     end
     
     def get_entry id

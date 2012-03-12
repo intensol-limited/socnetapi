@@ -12,13 +12,16 @@ module Socnetapi
     
     def client
       r = @blogger.get("http://www.blogger.com/feeds/default/blogs?v=2&access_token=#{@access_token}")
+      raise Socnetapi::Error::BadResponse unless r.is_a?(GData::HTTP::Response)
       p r.response.body
       @blogger
     end
     
     def delete(id)
       edit_url = "http://gdata.blogger.com/feeds/api/users/default/uploads/#{id}"
-      @blogger.delete(edit_url)
+      r = @blogger.delete(edit_url)
+      raise Socnetapi::Error::BadResponse unless r.is_a?(GData::HTTP::Response)
+      r
     end
 
 

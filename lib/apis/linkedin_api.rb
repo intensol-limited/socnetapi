@@ -16,7 +16,8 @@ module Socnetapi
     
     def create properties = {}
       res = @linkedin.put("/v1/people/~/current-status","<?xml version=\"1.0\" encoding=\"UTF-8\"?><current-status>#{properties[:body]}</current-status>")
-      res rescue nil
+      raise Socnetapi::Error::BadResponse unless res.is_a?(GData::HTTP::Response)
+      res
     end
     
     def update properties = {}
@@ -25,11 +26,15 @@ module Socnetapi
     end
     
     def delete
-      @linkedin.delete("/v1/people/~/current-status")
+      res = @linkedin.delete("/v1/people/~/current-status")
+      raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
+      res
     end
     
     def friends
-      prepare_friends JSON::parse(@linkedin.get('/v1/people/~/connections',{'x-li-format' => 'json'}).body)
+      res = @linkedin.get('/v1/people/~/connections',{'x-li-format' => 'json'})
+      raise Socnetapi::Error::BadResponse unless res.is_a?(GData::HTTP::Response)
+      prepare_friends JSON::parse(res.body)
     end
     
     private

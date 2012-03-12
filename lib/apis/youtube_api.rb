@@ -17,17 +17,21 @@ module Socnetapi
 
     def friends
       #prepare_friends @youtube.get('http://gdata.youtube.com/feeds/api/users/default/contacts?v=2').body
-      prepare_friends @youtube.get("http://gdata.youtube.com/feeds/api/users/default/subscriptions?v=2").body
+      response = @youtube.get("http://gdata.youtube.com/feeds/api/users/default/subscriptions?v=2")
+      raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
+      prepare_friends response.body
     end
 
     def user_entries
-      url = "http://gdata.youtube.com/feeds/api/users/default/uploads"
-      parse_entries(@youtube.get(url).body)
+      response = @youtube.get("http://gdata.youtube.com/feeds/api/users/default/uploads")
+      raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
+      parse_entries(response.body)
     end
 
     def delete(id)
       edit_url = "http://gdata.youtube.com/feeds/api/users/default/uploads/#{id}"
-      @youtube.delete(edit_url)
+      response = @youtube.delete(edit_url)
+      raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
     end
 
 
@@ -48,11 +52,10 @@ module Socnetapi
         </entry>}
 
       response = @youtube.put(edit_url, entry)
-
       raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
 
       @doc = Nokogiri::XML(response.body)
-      @doc.at('//yt:videoid').try(:text) rescue nil
+      @doc.at('//yt:videoid').try(:text)
     end
 
 
@@ -79,17 +82,19 @@ module Socnetapi
       raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
 
       @doc = Nokogiri::XML(response.body)
-      @doc.at('//yt:videoid').try(:text) rescue nil
+      @doc.at('//yt:videoid').try(:text)
     end
 
     def get_entries
-      subscriptions = @youtube.get("http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos").body
-      parse_entries subscriptions
+      response = @youtube.get("http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos")
+      raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
+      parse_entries response.body
     end
 
     def entry id
-      url = "http://gdata.youtube.com/feeds/api/videos/#{id}?v=2"
-      parse_entry_from_xml(@youtube.get(url).body)
+      response = @youtube.get("http://gdata.youtube.com/feeds/api/videos/#{id}?v=2")
+      raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
+      parse_entry_from_xml response.body
     end
 
     private
@@ -132,19 +137,15 @@ module Socnetapi
     def prepare_friends friends
       resp = []
       @doc = Nokogiri::XML(friends)
-      begin
-        @doc.css('yt|username').each do |username_node|
-          username = username_node.try(:text)
-          userdata = JSON.parse(@youtube.get("http://gdata.youtube.com/feeds/api/users/#{username}?fields=yt:username,media:thumbnail&alt=json").body)
-          resp << {
-           id: username_node.try(:text),
-           nickname:  username_node.try(:text),
-           name: username_node.try(:text),
-           userpic: userdata["entry"]["media$thumbnail"]["url"]
-          }
-        end
-      rescue
-        return []
+      @doc.css('yt|username').each do |username_node|
+        username = username_node.try(:text)
+        userdata = JSON.parse(@youtube.get("http://gdata.youtube.com/feeds/api/users/#{username}?fields=yt:username,media:thumbnail&alt=json").body)
+        resp << {
+         id: username_node.try(:text),
+         nickname:  username_node.try(:text),
+         name: username_node.try(:text),
+         userpic: userdata["entry"]["media$thumbnail"]["url"]
+        }
       end
       resp
     end

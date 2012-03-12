@@ -36,7 +36,7 @@ module Socnetapi
     end
     
     def get_entry(id)
-      prepare_entry(JSON::parse(@tumblr.get("/v2/blog/#{@blogname}/posts?id=#{id}&api_key=#{@api_key}").body)["response"]["posts"].last) rescue nil
+      prepare_entry(JSON::parse(@tumblr.get("/v2/blog/#{@blogname}/posts?id=#{id}&api_key=#{@api_key}").body)["response"]["posts"].last)
     end
 
     def create properties = {}

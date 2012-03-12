@@ -10,7 +10,7 @@ module Socnetapi
     end
     
     def friends 
-    	prepare_friends(@vkontakte.friends.get(:uid => @uid,:fields => "uid,first_name,last_name,nickname,photo",:access_token => @access_token)) rescue []
+    	prepare_friends(@vkontakte.friends.get(:uid => @uid,:fields => "uid,first_name,last_name,nickname,photo",:access_token => @access_token))
     end
     
     def get_entries count = 100
@@ -19,7 +19,7 @@ module Socnetapi
         @source_ids << friend[:id]
       end
       news = @vkontakte.newsfeed.get(:access_token => @access_token, :count => count, :source_ids => @source_ids.to_s)
-      prepare_entries(news["items"]).compact rescue []
+      prepare_entries(news["items"]).compact
     end
     
     def get_entry id

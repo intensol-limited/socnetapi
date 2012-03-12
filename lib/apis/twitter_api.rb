@@ -25,7 +25,7 @@ module Socnetapi
     end
     
     def get_entry id
-      prepare_entry(@twitter.status(id)) rescue nil
+      prepare_entry(@twitter.status(id))
     end
     
     def create properties = {}

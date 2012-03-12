@@ -10,11 +10,11 @@ module Socnetapi
     end
     
     def friends
-      prepare_friends(@facebook.get_connections("me", "friends")) rescue []
+      prepare_friends(@facebook.get_connections("me", "friends"))
     end
     
     def get_entries
-      prepare_entries(@facebook.get_connections("me", "home")) rescue []
+      prepare_entries(@facebook.get_connections("me", "home"))
     end
     
     def get_entry id

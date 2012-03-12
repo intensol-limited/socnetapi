@@ -11,13 +11,13 @@ module Socnetapi
     
     def friends
       vimeo_contacts = Vimeo::Advanced::Contact.new(@api_key, @api_secret, @token_hash)
-      prepare_friends vimeo_contacts.get_all(@user_id) rescue []
+      prepare_friends vimeo_contacts.get_all(@user_id)
     end
 
     def get_entries
       friends.map do |friend|
         vimeo_videos = Vimeo::Advanced::Video.new(@api_key, @api_secret, @token_hash)
-        prepare_entries({:id => friend[:id], :name => friend['name'], :userpic => friend['userpic']}, vimeo_videos.get_all(friend[:id])) rescue []
+        prepare_entries({:id => friend[:id], :name => friend['name'], :userpic => friend['userpic']}, vimeo_videos.get_all(friend[:id]))
       end
     end
     
@@ -58,30 +58,22 @@ module Socnetapi
 
     # params: title, description, tags, id
     def update(id, params = {})
-      begin
-        vimeo_video = Vimeo::Advanced::Video.new(@api_key, @api_secret, @token_hash)
+      vimeo_video = Vimeo::Advanced::Video.new(@api_key, @api_secret, @token_hash)
 
-        return unless id
-        puts "Vimeo: Updating #{id}"
+      return unless id
+      puts "Vimeo: Updating #{id}"
 
-        vimeo_video.set_description(id, params[:description]) if params[:description]
-        vimeo_video.set_title(id, params[:title]) if params[:title]
-        vimeo_video.clear_tags(id) if params[:tags]
-        vimeo_video.add_tags(id, params[:tags]) if params[:tags]
-      rescue
-        puts "Vimeo: Updating #{id} failed!"
-      end
+      vimeo_video.set_description(id, params[:description]) if params[:description]
+      vimeo_video.set_title(id, params[:title]) if params[:title]
+      vimeo_video.clear_tags(id) if params[:tags]
+      vimeo_video.add_tags(id, params[:tags]) if params[:tags]
     end
 
     def delete(id)
       return unless id
-      begin
-        vimeo_video = Vimeo::Advanced::Video.new(@api_key, @api_secret, @token_hash)
-        puts "Vimeo: Deleting #{video_id}"
-        vimeo_video.delete(id) if id
-      rescue
-        puts "Vimeo: Deleting #{video_id} failed!"
-      end
+      vimeo_video = Vimeo::Advanced::Video.new(@api_key, @api_secret, @token_hash)
+      puts "Vimeo: Deleting #{video_id}"
+      vimeo_video.delete(id) if id
     end
     
     private
