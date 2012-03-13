@@ -56,6 +56,7 @@ module Socnetapi
     def friends
       js = JSON::parse(@tumblr.get("/v2/user/following").body)
       raise Socnetapi::Error::BadResponse if js["meta"]["status"] != 200
+      #raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.is_a?(GData::HTTP::Response) || res.code != 200
       prepare_friends(js["response"]["blogs"])
     end
     
