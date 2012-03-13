@@ -12,15 +12,14 @@ module Socnetapi
 
     def get_entries options = {}
       res = @linkedin.get('/v1/people/~/network/updates', {'x-li-format' => 'json'})
-      raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.is_a?(GData::HTTP::Response) || res.code != "200"
+      raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
       values = JSON::parse(res.body)
-      values.merge('values' => []) if values['_total'] == 0
-      prepare_entries values
+      prepare_entries ((values.merge('values' => []) if values['_total'] == 0))
     end
 
     def create properties = {}
       res = @linkedin.put("/v1/people/~/current-status", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><current-status>#{properties[:body]}</current-status>")
-      raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.is_a?(GData::HTTP::Response) || res.code != "200"
+      raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
       res
     end
 
@@ -31,16 +30,15 @@ module Socnetapi
 
     def delete
       res = @linkedin.delete("/v1/people/~/current-status")
-      raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.is_a?(GData::HTTP::Response) || res.code != "200"
+      raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
       res
     end
 
     def friends
       res = @linkedin.get('/v1/people/~/connections', {'x-li-format' => 'json'})
-      raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.is_a?(GData::HTTP::Response) || res.code != "200"
+      raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
       values = JSON::parse(res.body)
-      values.merge('values' => []) if values['_total'] == 0
-      prepare_friends values
+      prepare_friends ((values.merge('values' => []) if values['_total'] == 0))
     end
 
     private
