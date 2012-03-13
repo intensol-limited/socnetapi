@@ -55,9 +55,12 @@ module Socnetapi
 
     private
     def read_google_activities(token)
-      c = Curl::Easy.new("https://www.googleapis.com/plus/v1/people/me/activities/public?alt=json&pp=1&key=#{app_key}&access_token=#{token}")
-      c.perform
-      JSON.parse(c.body_str)['items'] || []
+      (c = Curl::Easy.new("https://www.googleapis.com/plus/v1/people/me/activities/public?alt=json&pp=1&key=#{app_key}&access_token=#{token}")).perform
+      if (js = JSON.parse(c.body_str)).has_key?('error')
+        raise Socnetapi::Error::BadResponse.new(js["error"]["message"], js["error"]["code"], js["error"]["code"])
+      else
+        js['items'] || []
+      end
     end
   end
 end
