@@ -24,39 +24,48 @@ module Socnetapi
     # @option options [Integer] :count Specifies the number of records to retrieve. Must be less than or equal to 200.
     # @option options [Integer] :page Specifies the page of results to retrieve.
     def get_entries options = {}
-      prepare_entries(JSON::parse(@tumblr.get("/v2/user/dashboard").body)["response"]["posts"])
+      js = JSON::parse(@tumblr.get("/v2/user/dashboard").body)
+      raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
+      prepare_entries(js["response"]["posts"])
     end
 
     def get_user_avatar
-      JSON::parse(@tumblr.get("/v2/blog/#{user_blogs.first}.tumblr.com/avatar").body)["response"]["avatar_url"]
+      js = JSON::parse(@tumblr.get("/v2/blog/#{user_blogs.first}.tumblr.com/avatar").body)
+      raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
+      js["response"]["avatar_url"]
     end
 
     def get_user_blogs
-      prepare_user_blogs(JSON::parse(@tumblr.post("/v2/user/info").body)['response']['user']['blogs'])
+      js = JSON::parse(@tumblr.post("/v2/user/info").body)
+      raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
+      prepare_user_blogs(js['response']['user']['blogs'])
     end
     
     def get_entry(id)
-      prepare_entry(JSON::parse(@tumblr.get("/v2/blog/#{@blogname}/posts?id=#{id}&api_key=#{@api_key}").body)["response"]["posts"].last)
+      js = JSON::parse(@tumblr.get("/v2/blog/#{@blogname}/posts?id=#{id}&api_key=#{@api_key}").body)
+      raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
+      prepare_entry(js["response"]["posts"].last)
     end
 
     def create properties = {}
-      res = JSON::parse(@tumblr.post("/v2/blog/#{@blogname}/post",properties).body)["response"]["id"]
-      return nil unless res
-      res
+      js = JSON::parse(@tumblr.post("/v2/blog/#{@blogname}/post",properties).body)
+      raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
+      js["response"]["id"]
     end
     
     def update properties = {}
-      @tumblr.post("/v2/blog/#{@blogname}/post/edit",properties)
+      js = JSON::parse(@tumblr.post("/v2/blog/#{@blogname}/post/edit",properties))
+      raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
     end
     
     def delete(id)
-      @tumblr.post("/v2/blog/#{@blogname}/post/delete",{:id => id})
+      js = JSON::parse(@tumblr.post("/v2/blog/#{@blogname}/post/delete",{:id => id}))
+      raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
     end
     
     def friends
       js = JSON::parse(@tumblr.get("/v2/user/following").body)
-      raise Socnetapi::Error::BadResponse if js["meta"]["status"] != 200
-      #raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.is_a?(GData::HTTP::Response) || res.code != 200
+      raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
       prepare_friends(js["response"]["blogs"])
     end
     
