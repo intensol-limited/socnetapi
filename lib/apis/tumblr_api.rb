@@ -134,7 +134,7 @@ module Socnetapi
     end
 
     def exception_block
-      (raise ($!.code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
+      (raise ($!.respond_to?("code") && $!.code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
     end
   end
 end

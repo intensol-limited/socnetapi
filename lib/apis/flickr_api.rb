@@ -65,7 +65,7 @@ module Socnetapi
     private
 
     def exception_block
-      (raise ($!.code == 98) ? Socnetapi::Error::Unauthorized : $!) if $!
+      (raise ($!.respond_to?("code") && $!.code == 98) ? Socnetapi::Error::Unauthorized : $!) if $!
     end
     
     def prepare_friends friends
