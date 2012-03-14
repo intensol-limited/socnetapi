@@ -20,18 +20,21 @@ module Socnetapi
       response = @youtube.get("http://gdata.youtube.com/feeds/api/users/default/subscriptions?v=2")
       raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
       prepare_friends response.body
+    rescue exception_block
     end
 
     def user_entries
       response = @youtube.get("http://gdata.youtube.com/feeds/api/users/default/uploads")
       raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
       parse_entries(response.body)
+    rescue exception_block
     end
 
     def delete(id)
       edit_url = "http://gdata.youtube.com/feeds/api/users/default/uploads/#{id}"
       response = @youtube.delete(edit_url)
       raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
+    rescue exception_block
     end
 
 
@@ -56,6 +59,7 @@ module Socnetapi
 
       @doc = Nokogiri::XML(response.body)
       @doc.at('//yt:videoid').try(:text)
+    rescue exception_block
     end
 
 
@@ -83,18 +87,21 @@ module Socnetapi
 
       @doc = Nokogiri::XML(response.body)
       @doc.at('//yt:videoid').try(:text)
+    rescue exception_block
     end
 
     def get_entries
       response = @youtube.get("http://gdata.youtube.com/feeds/api/users/default/newsubscriptionvideos")
       raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
       parse_entries response.body
+    rescue exception_block
     end
 
     def entry id
       response = @youtube.get("http://gdata.youtube.com/feeds/api/videos/#{id}?v=2")
       raise Socnetapi::Error::BadResponse unless response.is_a?(GData::HTTP::Response)
       parse_entry_from_xml response.body
+    rescue exception_block
     end
 
     private
@@ -152,6 +159,10 @@ module Socnetapi
 
     def parse_entry_id string
       string.split("/").last
+    end
+
+    def exception_block
+      (raise ($!.response.status_code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
     end
   end
 end

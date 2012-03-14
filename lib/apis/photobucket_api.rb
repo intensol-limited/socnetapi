@@ -19,25 +19,31 @@ module Socnetapi
     
     def friends
       prepare_friends()
+      rescue exception_block
     end
     
     def get_entries
       prepare_entries()
+    rescue exception_block
     end
     
     def get_entry id
       prepare_entry()
+    rescue exception_block
     end
     
     def create params = {}
       # res["id"]
+    rescue exception_block
     end
     
     def delete id
+    rescue exception_block
     end
     
     def update id, params = {}
       # res["id"]
+    rescue exception_block
     end
     
     private
@@ -72,6 +78,11 @@ module Socnetapi
           name: friend["name"]
         }
       end
+    end
+
+    def exception_block
+      #(raise ($!.code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
+      raise $! if $!
     end
   end
 end

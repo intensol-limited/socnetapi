@@ -12,18 +12,23 @@ module Socnetapi
     def friends
       vimeo_contacts = Vimeo::Advanced::Contact.new(@api_key, @api_secret, @token_hash)
       prepare_friends vimeo_contacts.get_all(@user_id)
+      rescue exception_block
     end
 
     def get_entries
       friends.map do |friend|
-        vimeo_videos = Vimeo::Advanced::Video.new(@api_key, @api_secret, @token_hash)
-        prepare_entries({:id => friend[:id], :name => friend['name'], :userpic => friend['userpic']}, vimeo_videos.get_all(friend[:id]))
+        begin
+          vimeo_videos = Vimeo::Advanced::Video.new(@api_key, @api_secret, @token_hash)
+          prepare_entries({:id => friend[:id], :name => friend['name'], :userpic => friend['userpic']}, vimeo_videos.get_all(friend[:id]))
+        rescue exception_block
+        end
       end
     end
     
     def get_entry id
       vimeo_video = Vimeo::Advanced::Video.new(@api_key, @api_secret, @token_hash)
       prepare_entry vimeo_video.get_info(id)
+    rescue exception_block
     end
     
     # params: title, description, tags, file_path 
@@ -54,6 +59,7 @@ module Socnetapi
       vimeo_video.set_title(video_id, params[:title]) if params[:title]
       vimeo_video.add_tags(video_id, params[:tags]) if params[:tags]
       video_id
+    rescue exception_block
     end
 
     # params: title, description, tags, id
@@ -67,6 +73,7 @@ module Socnetapi
       vimeo_video.set_title(id, params[:title]) if params[:title]
       vimeo_video.clear_tags(id) if params[:tags]
       vimeo_video.add_tags(id, params[:tags]) if params[:tags]
+    rescue exception_block
     end
 
     def delete(id)
@@ -74,6 +81,7 @@ module Socnetapi
       vimeo_video = Vimeo::Advanced::Video.new(@api_key, @api_secret, @token_hash)
       puts "Vimeo: Deleting #{video_id}"
       vimeo_video.delete(id) if id
+    rescue exception_block
     end
     
     private
@@ -120,6 +128,11 @@ module Socnetapi
           userpic: friend["portraits"]["portrait"][1]["_content"]
         }
       end
+    end
+
+    def exception_block
+      #(raise ($!.response.status_code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
+      raise $! if $!
     end
   end
 end

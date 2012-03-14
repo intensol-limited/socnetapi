@@ -11,6 +11,7 @@ module Socnetapi
     
     def friends 
     	prepare_friends(@vkontakte.friends.get(:uid => @uid,:fields => "uid,first_name,last_name,nickname,photo",:access_token => @access_token))
+      rescue exception_block
     end
     
     def get_entries count = 100
@@ -20,37 +21,45 @@ module Socnetapi
       end
       news = @vkontakte.newsfeed.get(:access_token => @access_token, :count => count, :source_ids => @source_ids.to_s)
       prepare_entries(news["items"]).compact
+    rescue exception_block
     end
     
     def get_entry id
     	prepare_entry(@vkontakte.wall.getById(:posts => "#{@uid}_#{id}",:access_token => @access_token)[0])
+    rescue exception_block
     end
     
     def create params = {}
       res = @vkontakte.wall.post(:message => params[:message], :access_token => @access_token)
       res["post_id"] if res
+    rescue exception_block
     end
     
     def delete id
       @vkontakte.wall.delete(:post_id => id, :access_token => @access_token)
+    rescue exception_block
     end
     
     def update id, params = {}
       delete(id)
       res = @vkontakte.wall.post(:message => params[:message], :access_token => @access_token)
       res["post_id"] if res
+    rescue exception_block
     end
    	
 		def get_profile id
 			profile = @vkontakte.getProfiles(:uids => id, :fields => 'fist_name,last_name,nickname,photo,photo_medium,photo_big')
 			prepare_profile(profile[0]["user"])
+    rescue exception_block
 		end
 		
 		def get_video owner_id,id
 			video = @vkontakte.video.get(:videos => "#{owner_id}_#{id}",:access_token => @access_token)
 			video.shift
 			prepare_video(video[0])
-		end
+    rescue exception_block
+    end
+
     private
     
     def prepare_entry entry
@@ -152,6 +161,11 @@ module Socnetapi
 			photos.shift
 			photos.each{ |photo| photo.is_a?(Hash) ? urls << photo["src_big"] : nil}
 			urls
-		end
+    end
+
+    def exception_block
+      #(raise ($!.response.status_code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
+      raise $! if $!
+    end
   end
 end

@@ -20,18 +20,18 @@ module Socnetapi
       url = "https://picasaweb.google.com/data/feed/api/user/default?access=private"
       response = @picasa.get(url)
       parse_entries response.body
+      rescue exception_block
     end
         
     def get_entry id
       url = "https://picasaweb.google.com/data/entry/api/user/default/albumid/#{id}?access=private"
       response = @picasa.get(url)
       parse_entry response.body
+    rescue exception_block
     end
     
     def create album
-      
-      url = "https://picasaweb.google.com/data/feed/api/user/default" 
-      
+      url = "https://picasaweb.google.com/data/feed/api/user/default"
       xml = <<XML
       <entry xmlns='http://www.w3.org/2005/Atom'
           xmlns:media='http://search.yahoo.com/mrss/'
@@ -46,6 +46,7 @@ XML
       
       response = @picasa.post(url, xml)
       parse_entry response.body
+    rescue exception_block
     end
     
     
@@ -70,21 +71,23 @@ XML
 XML
       
       @picasa.headers["If-Match"] = album[:etag]
-      
       response = @picasa.put(url, xml)
       parse_entry response.body
+    rescue exception_block
     end
     
     def delete album
       @picasa.headers["If-Match"] = album[:etag]
       @picasa.delete album[:edit_url]
       album
+    rescue exception_block
     end
     
     def get_photos album
       url = "https://picasaweb.google.com/data/feed/api/user/#{album[:author][:id]}/albumid/#{album[:id]}"
       response = @picasa.get url
       parse_photos response.body
+    rescue exception_block
     end
     
     def add_photo album, photo, file_path
@@ -99,17 +102,20 @@ XML
       </entry>
       }
       @picasa.post_file(url, file_path, mime_type, entry)
+    rescue exception_block
     end
     
     def remove_photo photo
       url = photo[:edit_url]
       @picasa.headers["If-Match"] = photo[:etag]
       @picasa.delete(url)
+    rescue exception_block
     end
     
     def friends
       url = "https://picasaweb.google.com/data/feed/api/user/default/contacts?kind=user"
       parse_friends @picasa.get(url).body
+    rescue exception_block
     end
     
     protected
@@ -202,6 +208,10 @@ XML
     
       return albums
     end
-    
+
+    def exception_block
+      #(raise ($!.code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
+      raise $! if $!
+    end
   end
 end

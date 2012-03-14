@@ -27,46 +27,54 @@ module Socnetapi
       js = JSON::parse(@tumblr.get("/v2/user/dashboard").body)
       raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
       prepare_entries(js["response"]["posts"])
+    rescue exception_block
     end
 
     def get_user_avatar
       js = JSON::parse(@tumblr.get("/v2/blog/#{user_blogs.first}.tumblr.com/avatar").body)
       raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
       js["response"]["avatar_url"]
+    rescue exception_block
     end
 
     def get_user_blogs
       js = JSON::parse(@tumblr.post("/v2/user/info").body)
       raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
       prepare_user_blogs(js['response']['user']['blogs'])
+    rescue exception_block
     end
     
     def get_entry(id)
       js = JSON::parse(@tumblr.get("/v2/blog/#{@blogname}/posts?id=#{id}&api_key=#{@api_key}").body)
       raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
       prepare_entry(js["response"]["posts"].last)
+    rescue exception_block
     end
 
     def create properties = {}
       js = JSON::parse(@tumblr.post("/v2/blog/#{@blogname}/post",properties).body)
       raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
       js["response"]["id"]
+    rescue exception_block
     end
     
     def update properties = {}
       js = JSON::parse(@tumblr.post("/v2/blog/#{@blogname}/post/edit",properties))
       raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
+    rescue exception_block
     end
     
     def delete(id)
       js = JSON::parse(@tumblr.post("/v2/blog/#{@blogname}/post/delete",{:id => id}))
       raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
+    rescue exception_block
     end
     
     def friends
       js = JSON::parse(@tumblr.get("/v2/user/following").body)
       raise Socnetapi::Error::BadResponse.new(js["meta"]["msg"], js["meta"]["status"], js["meta"]["status"]) if js["meta"]["status"] != 200
       prepare_friends(js["response"]["blogs"])
+    rescue exception_block
     end
     
     private
@@ -123,6 +131,10 @@ module Socnetapi
 
     def get_audios entry
       entry["type"] == "audio" ? {:embed_body => entry["player"] , :url => entry["source_url"] } : []
+    end
+
+    def exception_block
+      (raise ($!.code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
     end
   end
 end
