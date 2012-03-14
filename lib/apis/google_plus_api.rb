@@ -19,18 +19,22 @@ module Socnetapi
 
     def client
       @client
+    rescue exception_block
     end
 
     def app_key
       @app_key
+    rescue exception_block
     end
 
     def googleplus
       @googleplus
+    rescue exception_block
     end
 
     def get_entries(token)
       read_google_activities(token).inject([]) {|ret, elem| ret << {:id => elem['actor']['id'], :activity_id => elem['id'],:name => elem['actor']['displayName'], :name_link => elem['actor']['url'], :photo => elem['actor']['image']['url'] , :created_at => elem['published'], :text => elem['title'] , :text_link => elem['url'] , :attachments => elem['object']['attachments']}}
+    rescue exception_block
     end
 
     def check_and_update_google_token(extra_credentials)
@@ -51,9 +55,15 @@ module Socnetapi
           end
         end
       ]
+    rescue exception_block
     end
 
     private
+
+    def exception_block
+      (raise ($!.code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
+    end
+
     def read_google_activities(token)
       (c = Curl::Easy.new("https://www.googleapis.com/plus/v1/people/me/activities/public?alt=json&pp=1&key=#{app_key}&access_token=#{token}")).perform
       if (js = JSON.parse(c.body_str)).has_key?('error')

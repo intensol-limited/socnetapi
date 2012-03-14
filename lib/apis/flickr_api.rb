@@ -13,14 +13,17 @@ module Socnetapi
     
     def client
       @flickr
+    rescue exception_block
     end
     
     def friends
       prepare_friends @flickr.contacts.getList
+    rescue exception_block
     end
     
     def get_entries
       prepare_entries @flickr.photos.getContactsPhotos
+    rescue exception_block
     end
     
     def get_entry id, secret = ''
@@ -40,23 +43,31 @@ module Socnetapi
         created_at: entry.dates.taken,
         url: FlickRaw.url_photopage(entry)
       }
+    rescue exception_block
     end
     
     def create file_path, params = {}
       # See http://www.flickr.com/services/api/upload.api.html for more information on the arguments.
       @flickr.upload_photo file_path, {:title => params[:title], :description => params[:description]}
+    rescue exception_block
     end
     
     def update file_path, params = {}
       # See http://www.flickr.com/services/api/replace.api.html for more information on the arguments.
       @flickr.replace_photo file_path, :photo_id => params[:photo_id]
+    rescue exception_block
     end
     
     def delete id
       @flickr.photos.delete :photo_id => id.to_s
+    rescue exception_block
     end
     
     private
+
+    def exception_block
+      (raise ($!.code == 98) ? Socnetapi::Error::Unauthorized : $!) if $!
+    end
     
     def prepare_friends friends
       friends.map do |friend|

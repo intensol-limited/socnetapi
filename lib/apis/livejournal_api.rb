@@ -23,27 +23,32 @@ module Socnetapi
       session = LiveJournal::Request::SessionGenerate.new(user)
       msg = session.instance_variable_get(:@result)["errmsg"]
       msg ? msg : "OK"
+    rescue exception_block
     end
     
     # Get all entries. Pass a +limit+ to only get that many (the most recent).
     def get_entries(limit = nil)
       limit ||= -1
       prepare_entries(LiveJournal::Request::GetFriendsPage.new(@user, :recent => limit, :strict => false).run)
+    rescue exception_block
     end
     
     # Get the LiveJournal::Entry with a given id.
     def get_entry(id)
       prepare_entry(LiveJournal::Request::GetEvents.new(@user, :itemid => id, :strict => false).run || raise("There is no entry with that id."))
+    rescue exception_block
     end
     
     # Get the LiveJournal::Entry with a given id.
     def entry(id)
       LiveJournal::Request::GetEvents.new(@user, :itemid => id, :strict => false).run || raise("There is no entry with that id.")
+    rescue exception_block
     end
     
     # Get the LiveJournal URL (e.g. http://foo.livejournal.com/123.html) for the entry with a given id.
     def url(id)
       entry(id).url(@user)
+    rescue exception_block
     end
     
     # Pass a hash of properties to create an entry. The :body is required. If you don't set
@@ -58,6 +63,7 @@ module Socnetapi
       assign_properties(entry, properties)
       LiveJournal::Request::PostEvent.new(@user, entry).run
       entry.itemid
+    rescue exception_block
     end
     
     # Pass the id of an entry and a hash of properties to update them.
@@ -75,17 +81,24 @@ module Socnetapi
       end
       LiveJournal::Request::EditEvent.new(@user, entry).run
       entry.itemid
+    rescue exception_block
     end
     
     def delete(id)
       LiveJournal::Request::EditEvent.new(@user, entry(id), :delete => true).run
+    rescue exception_block
     end
     
     def friends
       prepare_friends(LiveJournal::Request::Friends.new(@user, :include_friendofs => false).run)
+    rescue exception_block
     end
     
     private
+
+    def exception_block
+      (raise ($!.code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
+    end
     
       def prepare_entry post
          {

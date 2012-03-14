@@ -11,33 +11,43 @@ module Socnetapi
     
     def friends
       prepare_friends(@facebook.get_connections("me", "friends"))
+    rescue exception_block
     end
     
     def get_entries
       prepare_entries(@facebook.get_connections("me", "home"))
+    rescue exception_block
     end
     
     def get_entry id
       prepare_entry(@facebook.get_object(id))
+    rescue exception_block
     end
     
     def create params = {}
       res = @facebook.put_wall_post(params[:body], params[:attachments] ? params[:attachments] : {})
       res["id"]
+    rescue exception_block
     end
     
     def delete id
       @facebook.delete_object(id)
+    rescue exception_block
     end
     
     def update id, params = {}
       @facebook.delete_object(id)
       res = @facebook.put_wall_post(params[:body])
       res["id"]
+    rescue exception_block
     end
     
     private
-    
+
+    def exception_block
+      (raise ($!.raw_response['code'] == 190) ? Socnetapi::Error::Unauthorized : $!) if $!
+
+    end
     # id: 1056227917_193040020731897
     # from: 
     #   name: Yevgeniy Ikhelzon

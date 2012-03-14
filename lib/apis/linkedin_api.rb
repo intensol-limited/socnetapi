@@ -15,23 +15,27 @@ module Socnetapi
       raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
       values = JSON::parse(res.body)
       prepare_entries ((values.merge('values' => []) if values['_total'] == 0))
+    rescue exception_block
     end
 
     def create properties = {}
       res = @linkedin.put("/v1/people/~/current-status", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><current-status>#{properties[:body]}</current-status>")
       raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
       res
+    rescue exception_block
     end
 
     def update properties = {}
       delete
       create(properties)
+    rescue exception_block
     end
 
     def delete
       res = @linkedin.delete("/v1/people/~/current-status")
       raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
       res
+    rescue exception_block
     end
 
     def friends
@@ -39,9 +43,14 @@ module Socnetapi
       raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
       values = JSON::parse(res.body)
       prepare_friends ((values.merge('values' => []) if values['_total'] == 0))
+    rescue exception_block
     end
 
     private
+
+    def exception_block
+      (raise ($!.code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
+    end
 
     def prepare_friends friends
       friends['values'].map do |friend|
