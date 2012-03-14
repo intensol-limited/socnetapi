@@ -210,8 +210,7 @@ XML
     end
 
     def exception_block
-      #(raise ($!.code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
-      raise $! if $!
+      (raise ($!.response.status_code == 401) ? Socnetapi::Error::Unauthorized : $!) if $!
     end
   end
 end
