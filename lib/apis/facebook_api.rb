@@ -46,7 +46,6 @@ module Socnetapi
 
     def exception_block
       (raise ($!.raw_response['code'] == 190) ? Socnetapi::Error::Unauthorized : $!) if $!
-
     end
     # id: 1056227917_193040020731897
     # from: 

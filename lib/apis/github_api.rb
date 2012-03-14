@@ -11,10 +11,16 @@ module Socnetapi
     
     def client
       @client
+    rescue exception_block
     end
     
     def github
       @github
+    rescue exception_block
+    end
+
+    def exception_block
+      raise $! if $!
     end
   end
 end

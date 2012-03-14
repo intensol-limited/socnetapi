@@ -13,7 +13,6 @@ module Socnetapi
     
     def client
       @flickr
-    rescue exception_block
     end
     
     def friends

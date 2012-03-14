@@ -15,6 +15,7 @@ module Socnetapi
       raise Socnetapi::Error::BadResponse unless r.is_a?(GData::HTTP::Response)
       p r.response.body
       @blogger
+      rescue exception_block
     end
     
     def delete(id)
@@ -22,6 +23,7 @@ module Socnetapi
       r = @blogger.delete(edit_url)
       raise Socnetapi::Error::BadResponse unless r.is_a?(GData::HTTP::Response)
       r
+    rescue exception_block
     end
 
 
@@ -47,6 +49,7 @@ module Socnetapi
 
       @doc = Nokogiri::XML(response.body)
       @doc.at('//yt:videoid').text rescue nil
+    rescue exception_block
     end
 
 
@@ -74,7 +77,11 @@ module Socnetapi
 
       @doc = Nokogiri::XML(response.body)
       @doc.at('//yt:videoid').text rescue nil
+    rescue exception_block
+    end
+
+    def exception_block
+      raise $! if $!
     end
   end
-
 end

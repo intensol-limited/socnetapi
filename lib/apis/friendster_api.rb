@@ -15,10 +15,12 @@ module Socnetapi
     
     def get_user_info user_id = nil
       prepare_user make_request('GET', "/user/#{user_id}")
+      rescue exception_block
     end
     
     def friends user_id = nil
       prepare_friends make_request('GET', "/friends/#{user_id}")
+    rescue exception_block
     end
     
     protected
@@ -87,6 +89,10 @@ module Socnetapi
       sig = Digest::MD5.hexdigest(path + (params.map{|k, v| [k.to_s, v.to_s] }.sort.map{|k,v| "#{k}=#{v}" }.join) + @secret)
       params['sig'] = sig
       params
+    end
+
+    def exception_block
+      raise $! if $!
     end
   end
 end
