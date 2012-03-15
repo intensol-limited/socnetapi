@@ -69,6 +69,7 @@ module Socnetapi
     end
     
     def prepare_friends friends
+      return [] if !friends.respond_to?("map")
       friends.map do |friend|
         info = @flickr.people.getInfo :user_id => friend["nsid"]
         {
@@ -81,6 +82,7 @@ module Socnetapi
     end
     
     def prepare_entries entries
+      return [] if !entries.respond_to?("map")
       entries.map do |entry|
         prepare_entry entry
       end
