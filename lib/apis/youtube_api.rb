@@ -11,6 +11,11 @@ module Socnetapi
       @youtube.authorize_from_access params[:token], params[:secret]
     end
 
+    def profile
+      doc = @youtube.get("http://gdata.youtube.com/feeds/api/users/default")
+      Nokogiri::XML(doc.body).css("author name").text
+    end
+
     def client
       @youtube
     end
