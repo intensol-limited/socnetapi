@@ -8,6 +8,10 @@ module Socnetapi
       (Koala::HTTPService.http_options[:ssl] ||= {})[:ca_file] = '/etc/ssl/certs/ca-certificates.crt'
       @facebook = Koala::Facebook::API.new(params[:token])
     end
+
+    def profile
+      @facebook.get_object("me")
+    end
     
     def friends
       prepare_friends(@facebook.get_connections("me", "friends"))

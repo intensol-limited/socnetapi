@@ -19,6 +19,10 @@ module Socnetapi
       @user_avatar ||= get_user_avatar || ""
     end
 
+    def profile
+      JSON::parse(@tumblr.post("/v2/user/info").body)
+    end
+
     # @option options [Integer] :since_id Returns results with an ID greater than (that is, more recent than) the specified ID.
     # @option options [Integer] :max_id Returns results with an ID less than (that is, older than) or equal to the specified ID.
     # @option options [Integer] :count Specifies the number of records to retrieve. Must be less than or equal to 200.

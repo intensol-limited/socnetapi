@@ -10,6 +10,11 @@ module Socnetapi
       @linkedin = OAuth::AccessToken.new(consumer, params[:token], params[:secret])
     end
 
+    def profile
+      res = @linkedin.get('/v1/people/~:(id,first-name,last-name,headline,picture-url)', {'x-li-format' => 'json'})
+      JSON::parse(res.body)
+    end
+
     def get_entries options = {}
       res = @linkedin.get('/v1/people/~/network/updates', {'x-li-format' => 'json'})
       raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
@@ -42,7 +47,7 @@ module Socnetapi
       res = @linkedin.get('/v1/people/~/connections', {'x-li-format' => 'json'})
       raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
       values = JSON::parse(res.body)
-      prepare_friends ((values.merge('values' => []) if values['_total'] == 0))
+      prepare_friends(values['_total'] == 0 ? values.merge('values' => []) : values)
     rescue exception_block
     end
 
@@ -52,8 +57,8 @@ module Socnetapi
       (raise ($!.respond_to?("code") && $!.code == "401") ? Socnetapi::Error::Unauthorized : $!) if $!
     end
 
-    def prepare_friends friends
-      friends['values'].map do |friend|
+    def prepare_friends friends_list
+      friends_list['values'].map do |friend|
         {
             id: friend['id'],
             name: "#{friend['firstName']} #{friend['lastName']}",
