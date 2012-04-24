@@ -14,6 +14,10 @@ module Socnetapi
     rescue exception_block
     end
 
+    def news
+      @news
+    end
+
     def get_entries count = 100
       #грузит только новости друзей
       #@source_ids=[]
@@ -22,7 +26,7 @@ module Socnetapi
       #end
       #news = @vkontakte.newsfeed.get(:access_token => @access_token, :count => count, :source_ids => @source_ids.to_s)
       #грузит новости и от групп
-      news = @vkontakte.newsfeed.get(:access_token => @access_token, :count => count)
+      @news = @vkontakte.newsfeed.get(:access_token => @access_token, :count => count)
       prepare_entries(news["items"]).compact
     rescue exception_block
     end
@@ -52,12 +56,13 @@ module Socnetapi
 
     def get_profile id
       if id > 0
+        sleep(0.35)
         profile = @vkontakte.getProfiles(:uids => id, :fields => 'fist_name,last_name,nickname,photo,photo_medium,photo_big', :access_token => @access_token)
-        prepare_profile(profile[0]["user"])
+        prepare_profile(profile[0])
       else
         #айдишник группы при поступлении меньше нуля
-        profile = @vkontakte.groups.getById(:gid => id.abs, :access_token => @access_token)
-        prepare_group(profile[0])
+        #profile = @vkontakte.groups.getById(:gid => id.abs, :access_token => @access_token)
+        prepare_group(news['groups'].select {|v| v['gid'] == id.abs}.first)
       end
     rescue exception_block
     end
