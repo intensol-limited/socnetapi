@@ -16,11 +16,12 @@ module Socnetapi
     end
 
     def get_entries options = {}
-      res = @linkedin.get('/v1/people/~/network/updates', {'x-li-format' => 'json'})
-      raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
-      values = JSON::parse(res.body)
-      prepare_entries ((values.merge('values' => []) if values['_total'] == 0))
-    rescue exception_block
+          res = @linkedin.get('/v1/people/~/network/updates?scope=self', {'x-li-format' => 'json'})
+          raise Socnetapi::Error::BadResponse.new(res.message, res.code, res.code) unless res.code == "200"
+          values = JSON::parse(res.body)
+          values.merge('values' => []) if values['_total'] == 0
+          prepare_entries (values)
+        rescue exception_block
     end
 
     def create properties = {}
